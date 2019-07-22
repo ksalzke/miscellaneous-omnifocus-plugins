@@ -1,0 +1,36 @@
+/*{
+	"type": "action",
+	"targets": ["omnifocus"],
+	"author": "Kaitlin Salzke",
+	"identifier": "com.KaitlinSalzke.bringForwardMIT",
+	"version": "1.0",
+	"description": "'This action will remove the "☀️ MIT (Tomorrow)" tag from all tasks in database and replace it with the "🎯 MIT" tag.'",
+	"label": "Bring Forward MITs",
+	"shortLabel": "Bring Forward MITs"
+}*/
+var _ = function(){
+	var action = new PlugIn.Action(function(selection, sender){
+
+		var tagToRemove = tagNamed("Status").tagNamed("☀️ MIT (Tomorrow)");
+		var tagToAdd = tagNamed("Status").tagNamed("🎯 MIT");
+
+		// get all tasks tagged with the tag that is to be removed
+		var tasksForTomorrow = tagToRemove.tasks;
+
+		// 
+		tasksForTomorrow.forEach(function(task) {
+			task.addTag(tagToAdd);
+			task.removeTag(tagToRemove);
+});
+
+
+	});
+
+	action.validate = function(selection, sender){
+
+		return true
+	};
+	
+	return action;
+}();
+_;
