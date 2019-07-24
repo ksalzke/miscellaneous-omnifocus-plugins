@@ -1,0 +1,42 @@
+/*{
+	"type": "action",
+	"targets": ["omnifocus"],
+	"author": "Kaitlin Salzke",
+	"identifier": "com.KaitlinSalzke.reorderTags",
+	"version": "0.1",
+	"description": "Reorders the tags of the selected task(s) based on the order in 'Tags'.",
+	"label": "Reorder Tags",
+	"shortLabel": "Reorder Tags"
+}*/
+var _ = (function() {
+  var action = new PlugIn.Action(function(selection, sender) {
+    // action code
+    // selection options: tasks, projects, folders, tags
+
+    // create array of all tag names
+    tagNames = [];
+    tags.apply(tag => tagNames.push(tag));
+
+    // iterate through selected tasks
+    selection.tasks.forEach(function(task) {
+      // get assigned tags
+      assignedTags = task.tags;
+
+      // sort assigned tags based on tag index
+      sortedAssignedTags = assignedTags.sort(function(a, b) {
+        return tagNames.indexOf(a) > tagNames.indexOf(b);
+      });
+
+      console.log(sortedAssignedTags);
+    });
+  });
+
+  action.validate = function(selection, sender) {
+    // validation code
+    // selection options: tasks, projects, folders, tags
+    return selection.tasks.length > 0;
+  };
+
+  return action;
+})();
+_;
