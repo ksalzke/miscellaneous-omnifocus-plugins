@@ -3,7 +3,7 @@
 	"targets": ["omnifocus"],
 	"author": "Kaitlin Salzke",
 	"identifier": "com.KaitlinSalzke.reorderTags",
-	"version": "0.1",
+	"version": "1.0",
 	"description": "Reorders the tags of the selected task(s) based on the order in 'Tags'.",
 	"label": "Reorder Tags",
 	"shortLabel": "Reorder Tags"
