@@ -27,7 +27,11 @@ var _ = (function() {
         return tagNames.indexOf(a) > tagNames.indexOf(b);
       });
 
-      console.log(sortedAssignedTags);
+      // remove all tags from task
+      task.removeTags(assignedTags);
+
+      // re-apply tags in order
+      task.addTags(sortedAssignedTags);
     });
   });
 
