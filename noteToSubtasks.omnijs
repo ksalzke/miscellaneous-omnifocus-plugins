@@ -3,32 +3,47 @@
 	"type": "action",
 	"targets": ["omnifocus"],
 	"author": "Kaitlin Salzke",
-	"identifier": "com.KaitlinSalzke.addSubtask",
-	"version": "1.0",
+	"identifier": "com.KaitlinSalzke.noteToSubtasks",
+	"version": "1.1",
 	"description": "Converts the TaskPaper-formatted note of the selected task into subtasks. Note '[ ]' is recognised as '-' to allow for notes to be generated as part of a TaskPaper template.",
 	"label": "TaskPaper Note to Subtasks",
 	"shortLabel": "Note to Subtasks"
 }*/
-var _ = function(){
-	var action = new PlugIn.Action(function(selection, sender){
-		
-		task = selection.tasks[0]
+var _ = (function() {
+  var action = new PlugIn.Action(function(selection, sender) {
+    task = selection.tasks[0];
 
-		// get note and replace '[]' with '-'
-		var taskpaper = task.note.replace(/\[\s\]/g," - ");
-		
-		// build URL to paste tasks
-		urlStr = "omnifocus:///paste?target=/task/" + encodeURIComponent(task.id.primaryKey) + "&content="  + encodeURIComponent(taskpaper);
+    // get current perspective
+    var startingPerspective = document.windows[0].perspective;
 
-		//open URL (generating subtasks)
-	  	URL.fromString(urlStr).call(()=>{});
+    // get note and replace '[]' with '-'
+    var taskpaper = task.note.replace(/\[\s\]/g, " - ");
 
-	});
+    // build URL to paste tasks
+    var pasteUrlStr =
+      "omnifocus:///paste?target=/task/" +
+      encodeURIComponent(task.id.primaryKey) +
+      "&content=" +
+      encodeURIComponent(taskpaper);
 
-	action.validate = function(selection, sender){
-		if(selection.tasks.length === 1){return true} else {return false}
-	};
-	
-	return action;
-}();
+    //open URL (generating subtasks)
+    URL.fromString(pasteUrlStr).call(()=>{});
+    
+     // return to starting perspective
+    var perspectiveUrlStr = "omnifocus:///perspective/"+ encodeURIComponent(startingPerspective.name);
+    URL.fromString(perspectiveUrlStr).call(()=>{})
+
+
+  });
+
+  action.validate = function(selection, sender) {
+    if (selection.tasks.length === 1) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  return action;
+})();
 _;
