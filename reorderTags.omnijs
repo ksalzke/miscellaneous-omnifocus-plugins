@@ -13,6 +13,9 @@ var _ = (function() {
     // action code
     // selection options: tasks, projects, folders, tags
 
+    // ***CONFIGURATION:*** set up items here. Tags will be sorted based on order in Omnifocus unless otherwise specified here.
+    lastTags = ["Do", "🎯 MIT", "☀️ MIT (Tomorrow)"];
+
     // create array of all tag names
     tagNames = [];
     tags.apply(tag => tagNames.push(tag));
@@ -24,7 +27,19 @@ var _ = (function() {
 
       // sort assigned tags based on tag index
       sortedAssignedTags = assignedTags.sort(function(a, b) {
-        return tagNames.indexOf(a) > tagNames.indexOf(b);
+        if (lastTags.includes(a.name)) {
+          aTagOrder = tagNames.length + lastTags.indexOf(a.name);
+        } else {
+          aTagOrder = tagNames.indexOf(a);
+        }
+
+        if (lastTags.includes(b.name)) {
+          bTagOrder = tagNames.length + lastTags.indexOf(b.name);
+        } else {
+          bTagOrder = tagNames.indexOf(b);
+        }
+
+        return aTagOrder > bTagOrder;
       });
 
       // remove all tags from task
