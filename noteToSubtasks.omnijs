@@ -15,17 +15,21 @@ var _ = (function() {
     // get current perspective
     var startingPerspective = document.windows[0].perspective;
 
-    // get note and replace '[ ]' with '-'
-    var taskpaper = task.note.replace(/\[\s\]/g, " - ");
+    // get note and replace underscores before "[" with tabs -- needed because Shortcut removes tabs from Drafts template
+    var taskpaper = task.note.replace(/(_)+(?=\[)/g, function(match) {
+      let underscoreLength = match.length;
+      let replacement = "\t".repeat(underscoreLength);
+      return replacement;
+    });
+
+    // replace '[ ]' with '-'
+    taskpaper = taskpaper.replace(/\[\s\]/g, " - ");
 
     // replace '( )' with '[ ]'
     taskpaper = taskpaper.replace(/\(\s\)/g, "[ ]");
 
     // replace '< >' with '( )'
     taskpaper = taskpaper.replace(/\<\s\>/g, "( )");
-
-    // replace underscores with tabs -- needed because Shortcut removes tabs from Drafts template
-    taskpaper = taskpaper.replace(/_/g, "\t");
 
     // build URL to paste tasks
     var pasteUrlStr =
