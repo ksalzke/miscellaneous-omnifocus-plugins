@@ -15,7 +15,19 @@ var _ = (function() {
 
     // ***CONFIGURATION:*** set up items here. Tags will be sorted based on order in Omnifocus unless otherwise specified here.
     firstTags = [];
-    lastTags = ["Do", "🎯 MIT", "☀️ MIT (Tomorrow)"];
+    lastTags = [
+      "This Week",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+      "Do",
+      "🎯 MIT",
+      "☀️ MIT (Tomorrow)"
+    ];
 
     // create array of all tag names
     tagNames = [];
