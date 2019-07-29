@@ -1,0 +1,56 @@
+/*{
+	"type": "action",
+	"targets": ["omnifocus"],
+	"author": "Kaitlin Salzke",
+	"identifier": "com.KaitlinSalzke.completeForPrerequisite",
+	"version": "1.0",
+	"description": "Finds dependant tasks in the currently selected task's note, remove the 'Waiting' tag from the dependant task, and mark the current task as completed. NOTE: currently only works if only one dependent task.",
+	"label": "Complete For Prerequisite",
+	"shortLabel": "Complete For Prerequisite"
+}*/
+var _ = (function() {
+  var action = new PlugIn.Action(function(selection, sender) {
+    // action code
+    // selection options: tasks, projects, folders, tags
+
+    dependantTag = tagNamed("Activity Type")
+      .tagNamed("⏳ Waiting")
+      .tagNamed("🔒 Other task");
+
+    task = selection.tasks[0];
+
+    // use regex to find [DEPENDANT: taskid] matches in the notes and capture taskid
+    dependantTaskId = task.note.match(
+      /\[DEPENDANT: omnifocus:\/\/\/task\/(.*)\]/
+    )[1];
+    //console.log("dependant task ID: " + typeof dependantTaskId[1]);
+
+    // for captured task ID:
+    // get the task with that ID
+    var dependantTask = null;
+    dependantTag.tasks.forEach(function(task) {
+      if (task.id.primaryKey == dependantTaskId) {
+        dependantTask = task;
+        return ApplyResult.Stop;
+      }
+    });
+
+    // remove 'Waiting' tag from task
+    dependantTask.removeTag(dependantTag);
+
+    // then mark selected task as completed
+    task.markComplete();
+  });
+
+  action.validate = function(selection, sender) {
+    // validation code
+    // selection options: tasks, projects, folders, tags
+    return (
+      selection.tasks.length === 1 &&
+      selection.tasks[0].tags.includes(tagNamed("🔑"))
+    );
+  };
+
+  return action;
+})();
+_;
