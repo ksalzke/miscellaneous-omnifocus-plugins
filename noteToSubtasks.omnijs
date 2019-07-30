@@ -49,8 +49,12 @@ var _ = (function() {
         item.addTag(tagNamed("Checklist")); // add checklist tag
         item.addTags(task.tags); // add tags from creating task
 
-        var createdById = task.id.primaryKey;
-
+        var createdById;
+        var regex = /\[CREATEDBY: omnifocus:\/\/\/task\/(.+)\]/;
+        var regexResult = regex.exec(task.note);
+        if (regexResult == null) {
+          createdById = task.id.primaryKey;
+        } else createdById = regexResult[1];
         item.note =
           "[CREATEDBY: omnifocus:///task/" + createdById + "]\n\n" + item.note;
       });
