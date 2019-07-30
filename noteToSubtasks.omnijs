@@ -48,6 +48,11 @@ var _ = (function() {
         // for all created tasks and subtasks:
         item.addTag(tagNamed("Checklist")); // add checklist tag
         item.addTags(task.tags); // add tags from creating task
+
+        var createdById = task.id.primaryKey;
+
+        item.note =
+          "[CREATEDBY: omnifocus:///task/" + createdById + "]\n\n" + item.note;
       });
     });
 
