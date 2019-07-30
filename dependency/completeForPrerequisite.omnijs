@@ -4,7 +4,7 @@
 	"author": "Kaitlin Salzke",
 	"identifier": "com.KaitlinSalzke.completeForPrerequisite",
 	"version": "1.0",
-	"description": "Finds dependant tasks in the currently selected task's note, remove the 'Waiting' tag from the dependant task, and mark the current task as completed. NOTE: currently only works if only one dependent task.",
+	"description": "Finds dependant tasks in the currently selected task's note; removes the prerequisite details from the dependant task's note; removes the 'Waiting' tag from the dependant task if no remaining prerequisites; and marks the current task as completed.",
 	"label": "Complete For Prerequisite",
 	"shortLabel": "Complete For Prerequisite"
 }*/
