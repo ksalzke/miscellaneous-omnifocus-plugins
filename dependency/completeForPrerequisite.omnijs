@@ -19,6 +19,9 @@ var _ = (function() {
 
     task = selection.tasks[0];
 
+    //get task ID of selected task
+    var prerequisiteTaskId = task.id.primaryKey;
+
     // use regex to find [DEPENDANT: taskid] matches in the notes and capture task IDs
     regex = /\[DEPENDANT: omnifocus:\/\/\/task\/(.+)\]/g;
     var regexArray = [];
@@ -33,6 +36,11 @@ var _ = (function() {
           return ApplyResult.Stop;
         }
       });
+      // remove the prerequisite tag from the dependant task
+      dependantTask.note = dependantTask.note.replace(
+        "[PREREQUISITE: omnifocus:///task/" + prerequisiteTaskId + "]",
+        ""
+      );
 
       // remove 'Waiting' tag from dependant task
       dependantTask.removeTag(dependantTag);
