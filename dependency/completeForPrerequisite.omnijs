@@ -41,9 +41,11 @@ var _ = (function() {
         "[PREREQUISITE: omnifocus:///task/" + prerequisiteTaskId + "]",
         ""
       );
-
-      // remove 'Waiting' tag from dependant task
-      dependantTask.removeTag(dependantTag);
+      // check whether any remaining prerequisite tasks listed in the note (i.e. whether all prerequisites completed) - and if so
+      if (!/\[PREREQUISITE:/.test(dependantTask.note)) {
+        // if no remaining prerequisites, remove 'Waiting' tag from dependant task
+        dependantTask.removeTag(dependantTag);
+      }
     }
 
     // after processing all dependant tasks, mark selected task as completed
