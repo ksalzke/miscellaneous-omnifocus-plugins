@@ -15,10 +15,6 @@ var _ = (function() {
     // get current perspective
     var startingPerspective = document.windows[0].perspective;
 
-    /* // ignore dependent/prerequisite tasks in TaskPaper for subtasks
-    var regex = /\[(?:PREREQUISITE|DEPENDANT): omnifocus:\/\/\/task\/.+\]/g;
-    var taskpaper = task.note.replace(regex, ""); */
-
     // ignore everything up to first '[ ]' or '- ' in TaskPaper
     var regex = /^.*?(?=(\[\s\]|-\s))/gs;
     var taskpaper = task.note.replace(regex, "");
