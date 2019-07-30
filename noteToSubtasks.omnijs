@@ -43,7 +43,11 @@ var _ = (function() {
       encodeURIComponent(taskpaper);
 
     //open URL (generating subtasks)
-    URL.fromString(pasteUrlStr).call(() => {});
+    URL.fromString(pasteUrlStr).call(() => {
+      task.apply(function(item) {
+        item.addTag(tagNamed("Checklist"));
+      });
+    });
 
     // return to starting perspective
     var perspectiveUrlStr =
