@@ -45,7 +45,9 @@ var _ = (function() {
     //open URL (generating subtasks)
     URL.fromString(pasteUrlStr).call(() => {
       task.apply(function(item) {
-        item.addTag(tagNamed("Checklist"));
+        // for all created tasks and subtasks:
+        item.addTag(tagNamed("Checklist")); // add checklist tag
+        item.addTags(task.tags); // add tags from creating task
       });
     });
 
