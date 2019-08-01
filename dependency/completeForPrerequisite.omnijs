@@ -19,6 +19,8 @@ var _ = (function() {
 
     task = selection.tasks[0];
 
+    task.markComplete();
+
     //get task ID of selected task
     var prerequisiteTaskId = task.id.primaryKey;
     var prerequisiteTask = task;
@@ -40,34 +42,33 @@ var _ = (function() {
       });
     }
 
-    // use regex to find [DEPENDANT: taskid] matches in the notes and capture task IDs
-    regex = /\[DEPENDANT: omnifocus:\/\/\/task\/(.+)\]/g;
-    var regexArray = [];
-    while ((regexArray = regex.exec(prerequisiteTask.note)) !== null) {
-      // for each captured task ID
-      dependantTaskId = regexArray[1];
-      // get the task with that ID
-      var dependantTask = null;
-      dependantTag.tasks.forEach(function(task) {
-        if (task.id.primaryKey == dependantTaskId) {
-          dependantTask = task;
-          return ApplyResult.Stop;
+    if (prerequisiteTask.completed) {
+      // use regex to find [DEPENDANT: taskid] matches in the notes and capture task IDs
+      regex = /\[DEPENDANT: omnifocus:\/\/\/task\/(.+)\]/g;
+      var regexArray = [];
+      while ((regexArray = regex.exec(prerequisiteTask.note)) !== null) {
+        // for each captured task ID
+        dependantTaskId = regexArray[1];
+        // get the task with that ID
+        var dependantTask = null;
+        dependantTag.tasks.forEach(function(task) {
+          if (task.id.primaryKey == dependantTaskId) {
+            dependantTask = task;
+            return ApplyResult.Stop;
+          }
+        });
+        // remove the prerequisite tag from the dependant task
+        dependantTask.note = dependantTask.note.replace(
+          "[PREREQUISITE: omnifocus:///task/" + prerequisiteTaskId + "]",
+          ""
+        );
+        // check whether any remaining prerequisite tasks listed in the note (i.e. whether all prerequisites completed) - and if so
+        if (!/\[PREREQUISITE:/.test(dependantTask.note)) {
+          // if no remaining prerequisites, remove 'Waiting' tag from dependant task
+          dependantTask.removeTag(dependantTag);
         }
-      });
-      // remove the prerequisite tag from the dependant task
-      dependantTask.note = dependantTask.note.replace(
-        "[PREREQUISITE: omnifocus:///task/" + prerequisiteTaskId + "]",
-        ""
-      );
-      // check whether any remaining prerequisite tasks listed in the note (i.e. whether all prerequisites completed) - and if so
-      if (!/\[PREREQUISITE:/.test(dependantTask.note)) {
-        // if no remaining prerequisites, remove 'Waiting' tag from dependant task
-        dependantTask.removeTag(dependantTag);
       }
     }
-
-    // after processing all dependant tasks, mark selected task as completed
-    task.markComplete();
   });
 
   action.validate = function(selection, sender) {
