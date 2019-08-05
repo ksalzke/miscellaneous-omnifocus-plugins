@@ -15,7 +15,7 @@ var _ = (function() {
     var today = Calendar.current.startOfDay(now);
     console.log(today);
 
-    var matchingTasks = new Array();
+    var tasksDueToday = new Array();
     library.apply(function(item) {
       if (item instanceof Project && item.task.hasChildren) {
         item.task.children.forEach(tsk => {
@@ -24,13 +24,16 @@ var _ = (function() {
               Calendar.current.startOfDay(tsk.effectiveDueDate).getTime() ==
               today.getTime()
             ) {
-              matchingTasks.push(tsk);
+              tasksDueToday.push(tsk);
             }
           }
         });
       }
     });
-    console.log(matchingTasks);
+
+    tasksDueToday.forEach(task => {
+      task.addTag(tagNamed("Status").tagNamed("🎯 MIT"));
+    });
   });
 
   action.validate = function(selection, sender) {
