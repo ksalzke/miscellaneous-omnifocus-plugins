@@ -29,6 +29,11 @@ var _ = (function() {
       "☀️ MIT (Tomorrow)"
     ];
 
+    // if called externally (from script) generate selection object
+    if (typeof selection == "undefined") {
+      selection = document.windows[0].selection;
+    }
+
     // create array of all tag names
     tagNames = [];
     tags.apply(tag => tagNames.push(tag));
