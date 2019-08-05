@@ -30,14 +30,21 @@ var _ = (function() {
     // DEAL WITH SELECTED (DEPENDENT) NOTE
     task.addTag(dependantTag); // add waiting tag to selected note
     task.note =
-      "[PREREQUISITE: omnifocus:///task/" + prereqTaskId + "]\n\n" + task.note; // prepend prerequisite details to selected note
+      "[PREREQUISITE: omnifocus:///task/" +
+      prereqTaskId +
+      "] " +
+      prereqTask.name +
+      "\n\n" +
+      task.note; // prepend prerequisite details to selected note
 
     // DEAL WITH PREREQUISITE TASK
     prereqTask.addTag(prerequisiteTag); // add tag to prerequisite
     prereqTask.note =
       "[DEPENDANT: omnifocus:///task/" +
       task.id.primaryKey +
-      "]\n\n" +
+      "] " +
+      task.name +
+      "\n\n" +
       prereqTask.note; // prepend dependant details to prerequisite note
     prereqTask.removeTag(markerTag); // remove marker tag used for processing;
   });
