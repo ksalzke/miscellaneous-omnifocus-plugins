@@ -1,0 +1,39 @@
+/*{
+"type": "action",
+"targets": ["omnifocus"],
+"author": "Kaitlin Salzke",
+"identifier": "com.KaitlinSalzke.markTagsComplete",
+"version": "1.0",
+"description": "",
+"label": "Mark Tags Complete",
+"shortLabel": "Mark Tags Complete"
+}*/
+
+var _ = (function() {
+  var action = new PlugIn.Action(function(selection, sender) {
+    // action code
+    // selection options: tasks, projects, folders, tags
+
+    var tasks = selection.tasks;
+
+    var tagToAdd = tagNamed("⠀");
+
+    tasks.forEach(function(task) {
+      task.addTag(tagToAdd);
+    });
+
+    // re-order tags
+    PlugIn.find("com.KaitlinSalzke.reorderTags")
+      .action("reorderTags")
+      .perform();
+  });
+
+  action.validate = function(selection, sender) {
+    // validation code
+    // selection options: tasks, projects, folders, tags
+    return selection.tasks.length > 0;
+  };
+
+  return action;
+})();
+_;
