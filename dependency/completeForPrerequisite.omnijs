@@ -35,7 +35,7 @@ var _ = (function() {
       prerequisiteTaskId = createdByRegexResult[1];
       // get the task with that ID
       tagNamed("🔑").tasks.forEach(function(task) {
-        if (task.id.primaryKey == createdByTaskId) {
+        if (task.id.primaryKey == prerequisiteTaskId) {
           prerequisiteTask = task;
           return ApplyResult.Stop;
         }
