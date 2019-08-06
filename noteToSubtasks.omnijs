@@ -36,10 +36,22 @@ var _ = (function() {
     });
     tagList = tagArray.join(", ");
 
-    // add checklist tag
+    // get ID of (topmost) creating note
+    var createdById;
+    var regex = /\[CREATEDBY: omnifocus:\/\/\/task\/(.+)\]/;
+    var regexResult = regex.exec(task.note);
+    if (regexResult == null) {
+      createdById = task.id.primaryKey;
+    } else createdById = regexResult[1];
+
+    // add checklist tag, parent tags, and creating note brackets
     taskpaper = taskpaper.replace(
       /(\-.*)$/gm,
-      "$1 @tags(Checklist," + tagList + ")"
+      "$1 @tags(Checklist," +
+        tagList +
+        ")\n[CREATEDBY: omnifocus:///task/" +
+        createdById +
+        "]"
     );
 
     // replace '( )' with '[ ]'
@@ -56,27 +68,7 @@ var _ = (function() {
       encodeURIComponent(taskpaper);
 
     //open URL (generating subtasks)
-    URL.fromString(pasteUrlStr).call(() => {
-      /* task.children.forEach(function(child) {
-        child.apply(function(item) {
-          // for all created tasks and subtasks:
-          item.addTag(tagNamed("Checklist")); // add checklist tag
-          item.addTags(task.tags); // add tags from creating task
-
-          var createdById;
-          var regex = /\[CREATEDBY: omnifocus:\/\/\/task\/(.+)\]/;
-          var regexResult = regex.exec(task.note);
-          if (regexResult == null) {
-            createdById = task.id.primaryKey;
-          } else createdById = regexResult[1];
-          item.note =
-            "[CREATEDBY: omnifocus:///task/" +
-            createdById +
-            "]\n\n" +
-            item.note;
-        });
-      }); */
-    });
+    URL.fromString(pasteUrlStr).call(() => {});
 
     // return to starting perspective
     var perspectiveUrlStr =
