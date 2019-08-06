@@ -29,6 +29,19 @@ var _ = (function() {
     // replace '[ ]' with '-'
     taskpaper = taskpaper.replace(/\[\s\]/g, " - ");
 
+    //create list of tags from original task
+    var tagArray = [];
+    task.tags.forEach(function(tag) {
+      tagArray.push(tag.name);
+    });
+    tagList = tagArray.join(", ");
+
+    // add checklist tag
+    taskpaper = taskpaper.replace(
+      /(\-.*)$/gm,
+      "$1 @tags(Checklist," + tagList + ")"
+    );
+
     // replace '( )' with '[ ]'
     taskpaper = taskpaper.replace(/\(\s\)/g, "[ ]");
 
@@ -44,7 +57,7 @@ var _ = (function() {
 
     //open URL (generating subtasks)
     URL.fromString(pasteUrlStr).call(() => {
-      task.children.forEach(function(child) {
+      /* task.children.forEach(function(child) {
         child.apply(function(item) {
           // for all created tasks and subtasks:
           item.addTag(tagNamed("Checklist")); // add checklist tag
@@ -62,7 +75,7 @@ var _ = (function() {
             "]\n\n" +
             item.note;
         });
-      });
+      }); */
     });
 
     // return to starting perspective
