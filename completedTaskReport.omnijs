@@ -17,8 +17,8 @@ var _ = (function() {
     var tasksCompletedToday = new Array();
     library.apply(function(item) {
       if (item instanceof Project && item.task.hasChildren) {
-        item.task.children.forEach(tsk => {
-          if (tsk.completed) {
+        item.task.apply(tsk => {
+          if (tsk.completed && !tsk.hasChildren) {
             if (
               Calendar.current.startOfDay(tsk.completionDate).getTime() ==
               today.getTime()
