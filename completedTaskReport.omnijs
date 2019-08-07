@@ -11,6 +11,13 @@
 
 var _ = (function() {
   var action = new PlugIn.Action(function(selection, sender) {
+    // ignore tasks with the following tags
+    var tagsToExclude = [tagNamed("Activity Type").tagNamed("⏳ Waiting")];
+
+    function isHidden(element) {
+      return tagsToExclude.includes(element);
+    }
+
     var now = new Date();
     var today = Calendar.current.startOfDay(now);
 
@@ -21,7 +28,8 @@ var _ = (function() {
           if (tsk.completed && !tsk.hasChildren) {
             if (
               Calendar.current.startOfDay(tsk.completionDate).getTime() ==
-              today.getTime()
+                today.getTime() &&
+              !tsk.tags.some(isHidden)
             ) {
               tasksCompletedToday.push(tsk.name);
             }
