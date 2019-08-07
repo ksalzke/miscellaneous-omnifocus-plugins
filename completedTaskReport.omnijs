@@ -13,6 +13,8 @@ var _ = (function() {
   var action = new PlugIn.Action(function(selection, sender) {
     // ignore tasks with the following tags
     var tagsToExclude = [tagNamed("Activity Type").tagNamed("⏳ Waiting")];
+    // send entry to the following Day One journal
+    var dayOneJournalName = "Done Today";
 
     function isHidden(element) {
       return tagsToExclude.includes(element);
@@ -43,7 +45,7 @@ var _ = (function() {
     tasksCompletedToday.forEach(function(completedTask) {
       if (currentProject !== completedTask.containingProject.name) {
         markdown = markdown.concat(
-          "**",
+          "\n**",
           completedTask.containingProject.name,
           "**\n"
         );
@@ -52,7 +54,13 @@ var _ = (function() {
       markdown = markdown.concat(" * ", completedTask.name, "\n");
     });
 
-    console.log(markdown);
+    var dayOneUrlStr =
+      "dayone://post?entry=" +
+      encodeURIComponent(markdown) +
+      "&journal=" +
+      encodeURIComponent(dayOneJournalName);
+
+    URL.fromString(dayOneUrlStr).call(() => {});
   });
 
   action.validate = function(selection, sender) {
