@@ -31,14 +31,28 @@ var _ = (function() {
                 today.getTime() &&
               !tsk.tags.some(isHidden)
             ) {
-              tasksCompletedToday.push(tsk.name);
+              tasksCompletedToday.push(tsk);
             }
           }
         });
       }
     });
 
-    console.log(tasksCompletedToday.join("\n"));
+    var markdown = "";
+    var currentProject = "";
+    tasksCompletedToday.forEach(function(completedTask) {
+      if (currentProject !== completedTask.containingProject.name) {
+        markdown = markdown.concat(
+          "**",
+          completedTask.containingProject.name,
+          "**\n"
+        );
+        currentProject = completedTask.containingProject.name;
+      }
+      markdown = markdown.concat(" * ", completedTask.name, "\n");
+    });
+
+    console.log(markdown);
   });
 
   action.validate = function(selection, sender) {
