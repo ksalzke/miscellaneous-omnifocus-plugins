@@ -17,7 +17,9 @@ var _ = function(){
 		
 		var task = selection.tasks[0]
 		
-		var followUpTask = new Task("Follow up: "+task.name, task.before);
+		var followUpTaskName = task.name.replace("Waiting for:", "Follow up:");
+		
+		var followUpTask = new Task(followUpTaskName, task.before);
 		followUpTask.addTag(followUpTag);
 		
 	});
