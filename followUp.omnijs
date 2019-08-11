@@ -14,12 +14,15 @@ var _ = function(){
 		// selection options: tasks, projects, folders, tags
 		
 		var followUpTag = tagNamed("Activity Type").tagNamed("Contact");
+		var waitingTag = tagNamed("Activity Type").tagNamed("⏳ Waiting");
 		
 		var task = selection.tasks[0]
 		
 		var followUpTaskName = task.name.replace("Waiting for:", "Follow up:");
 		
 		var followUpTask = new Task(followUpTaskName, task.before);
+		followUpTask.addTags(task.tags);
+		followUpTask.removeTag(waitingTag);
 		followUpTask.addTag(followUpTag);
 		
 	});
