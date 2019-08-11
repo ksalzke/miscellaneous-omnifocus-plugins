@@ -1,0 +1,33 @@
+/*{
+	"type": "action",
+	"targets": ["omnifocus"],
+	"author": "Kaitlin Salzke",
+	"identifier": "com.KaitlinSalzke.followUp",
+	"version": "1.0",
+	"description": "Adds a new task to ‘follow up’ a selected waiting task (inserting it before the selected task)",
+	"label": "Follow Up",
+	"shortLabel": "Follow Up"
+}*/
+var _ = function(){
+	var action = new PlugIn.Action(function(selection, sender){
+		// action code
+		// selection options: tasks, projects, folders, tags
+		
+		var followUpTag = tagNamed("Activity Type").tagNamed("Contact");
+		
+		var task = selection.tasks[0]
+		
+		var followUpTask = new Task("Follow up: "+task.name, task.before);
+		followUpTask.addTag(followUpTag);
+		
+	});
+
+	action.validate = function(selection, sender){
+		// validation code
+		// selection options: tasks, projects, folders, tags
+		return (selection.tasks.length === 1)
+	};
+	
+	return action;
+}();
+_;
