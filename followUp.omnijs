@@ -49,9 +49,9 @@ var _ = function(){
 		var followUpTaskName = task.name.replace("Waiting for:", "Follow up:");
 		
 		var followUpTask = new Task(followUpTaskName, task.before);
-		followUpTask.addTags(task.tags);
 		followUpTask.removeTag(waitingTag);
-		followUpTask.addTag(selectedFollowUpMethod);	
+		followUpTask.addTag(selectedFollowUpMethod);
+		followUpTask.addTags(task.tags);	
 			
 			
 		})
@@ -60,18 +60,6 @@ var _ = function(){
 		formPromise.catch(function(err){
 			console.log("form cancelled", err.message)
 		})
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
 		
 	});
