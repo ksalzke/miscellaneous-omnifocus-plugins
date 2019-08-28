@@ -23,45 +23,63 @@ var _ = (function() {
     var now = new Date();
     var today = Calendar.current.startOfDay(now);
 
-    var tasksCompletedToday = new Array();
-    library.apply(function(item) {
-      if (item instanceof Project && item.task.hasChildren) {
-        item.task.apply(tsk => {
-          if (tsk.completed && !(tsk instanceof Project)) {
-            if (
-              Calendar.current.startOfDay(tsk.completionDate).getTime() ==
-                today.getTime() &&
-              !tsk.tags.some(isHidden)
-            ) {
-              tasksCompletedToday.push(tsk);
-              return ApplyResult.SkipChildren;
+    // form to confirm desired date
+    var inputForm = new Form();
+
+    popupMenu = new Form.Field.Date("dateInput", "Date", today);
+
+    inputForm.addField(popupMenu);
+
+    formPrompt = "Select date:";
+    formPromise = inputForm.show(formPrompt, "Continue");
+
+    formPromise.then(function(formObject) {
+      date = formObject.values["dateInput"];
+      var tasksCompletedToday = new Array();
+      library.apply(function(item) {
+        if (item instanceof Project && item.task.hasChildren) {
+          item.task.apply(tsk => {
+            if (tsk.completed && !(tsk instanceof Project)) {
+              if (
+                Calendar.current.startOfDay(tsk.completionDate).getTime() ==
+                  date.getTime() &&
+                !tsk.tags.some(isHidden)
+              ) {
+                tasksCompletedToday.push(tsk);
+                return ApplyResult.SkipChildren;
+              }
             }
-          }
-        });
-      }
+          });
+        }
+      });
+
+      var markdown = "";
+      var currentProject = "";
+      tasksCompletedToday.forEach(function(completedTask) {
+        if (currentProject !== completedTask.containingProject.name) {
+          markdown = markdown.concat(
+            "\n**",
+            completedTask.containingProject.name,
+            "**\n"
+          );
+          currentProject = completedTask.containingProject.name;
+        }
+        markdown = markdown.concat(" * ", completedTask.name, "\n");
+      });
+
+      var dayOneUrlStr =
+        "dayone://post?entry=" +
+        encodeURIComponent(markdown) +
+        "&journal=" +
+        encodeURIComponent(dayOneJournalName);
+
+      URL.fromString(dayOneUrlStr).call(() => {});
     });
 
-    var markdown = "";
-    var currentProject = "";
-    tasksCompletedToday.forEach(function(completedTask) {
-      if (currentProject !== completedTask.containingProject.name) {
-        markdown = markdown.concat(
-          "\n**",
-          completedTask.containingProject.name,
-          "**\n"
-        );
-        currentProject = completedTask.containingProject.name;
-      }
-      markdown = markdown.concat(" * ", completedTask.name, "\n");
+    // PROMISE FUNCTION CALLED UPON FORM CANCELLATION
+    formPromise.catch(function(err) {
+      console.log("form cancelled", err.message);
     });
-
-    var dayOneUrlStr =
-      "dayone://post?entry=" +
-      encodeURIComponent(markdown) +
-      "&journal=" +
-      encodeURIComponent(dayOneJournalName);
-
-    URL.fromString(dayOneUrlStr).call(() => {});
   });
 
   action.validate = function(selection, sender) {
