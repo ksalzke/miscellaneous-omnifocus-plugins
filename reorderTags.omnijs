@@ -3,7 +3,7 @@
 	"targets": ["omnifocus"],
 	"author": "Kaitlin Salzke",
 	"identifier": "com.KaitlinSalzke.reorderTags",
-	"version": "1.0",
+	"version": "1.1",
 	"description": "Reorders the tags of the selected task(s) based on the order in 'Tags'.",
 	"label": "Reorder Tags",
 	"shortLabel": "Reorder Tags"
@@ -15,19 +15,10 @@ var _ = (function() {
 
     // ***CONFIGURATION:*** set up items here. Tags will be sorted based on order in Omnifocus unless otherwise specified here.
     firstTags = [];
-    lastTags = [
-      "This Week",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-      "Sunday",
-      "Do",
-      "🎯 MIT",
-      "☀️ MIT (Tomorrow)"
-    ];
+    lastTags = [];
+
+    // my own configuration - add all subtags of "Scheduled" to lastTags
+    tagNamed("Scheduled").apply(tag => lastTags.push(tag));
 
     // if called externally (from script) generate selection object
     if (typeof selection == "undefined") {
@@ -35,8 +26,8 @@ var _ = (function() {
     }
 
     // create array of all tag names
-    tagNames = [];
-    tags.apply(tag => tagNames.push(tag));
+    allTags = [];
+    tags.apply(tag => allTags.push(tag));
 
     // iterate through selected tasks
     selection.tasks.forEach(function(task) {
@@ -45,20 +36,20 @@ var _ = (function() {
 
       // sort assigned tags based on tag index
       sortedAssignedTags = assignedTags.sort(function(a, b) {
-        if (firstTags.includes(a.name)) {
-          aTagOrder = firstTags.indexOf(a.name);
-        } else if (lastTags.includes(a.name)) {
-          aTagOrder = tagNames.length + lastTags.indexOf(a.name) + 1;
+        if (firstTags.includes(a)) {
+          aTagOrder = firstTags.indexOf(a);
+        } else if (lastTags.includes(a)) {
+          aTagOrder = allTags.length + lastTags.indexOf(a) + 1;
         } else {
-          aTagOrder = firstTags.length + tagNames.indexOf(a);
+          aTagOrder = firstTags.length + allTags.indexOf(a);
         }
 
-        if (firstTags.includes(b.name)) {
-          bTagOrder = firstTags.indexOf(b.name);
-        } else if (lastTags.includes(b.name)) {
-          bTagOrder = tagNames.length + lastTags.indexOf(b.name) + 1;
+        if (firstTags.includes(b)) {
+          bTagOrder = firstTags.indexOf(b);
+        } else if (lastTags.includes(b)) {
+          bTagOrder = allTags.length + lastTags.indexOf(b) + 1;
         } else {
-          bTagOrder = firstTags.length + tagNames.indexOf(b);
+          bTagOrder = firstTags.length + allTags.indexOf(b);
         }
 
         return aTagOrder > bTagOrder;
