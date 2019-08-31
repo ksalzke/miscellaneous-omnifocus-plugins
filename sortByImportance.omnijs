@@ -1,0 +1,45 @@
+/*{
+	"type": "action",
+	"targets": ["omnifocus"],
+	"author": "Kaitlin Salzke",
+	"identifier": "com.KaitlinSalzke.sortByImportance",
+	"version": "1.0",
+	"description": "",
+	"label": "Sort By Importance",
+	"shortLabel": "Sort By Importance"
+}*/
+var _ = (function() {
+  var action = new PlugIn.Action(function(selection, sender) {
+    // CONFIGURATION
+    ignoredFolders = []; // NB folders including 'Maybe' will also be ignored
+
+    // get all remaining projects not in 'maybe' folder
+    projectsList = [];
+    library.apply(function(item) {
+      if (
+        item instanceof Folder &&
+        (/Maybe/.test(item.name) || ignoredFolders.includes(item))
+      ) {
+        console.log("To skip: " + item);
+        return ApplyResult.SkipChildren;
+      }
+      if (
+        item instanceof Project &&
+        (item.task.taskStatus === Task.Status.Available ||
+          item.task.taskStatus === Task.Status.Blocked)
+      ) {
+        projectsList.push(item);
+      }
+    });
+    console.log(projectsList);
+  });
+
+  action.validate = function(selection, sender) {
+    // validation code
+    // selection options: tasks, projects, folders, tags
+    return true;
+  };
+
+  return action;
+})();
+_;
