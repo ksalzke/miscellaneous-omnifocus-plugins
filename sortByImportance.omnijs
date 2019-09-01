@@ -32,7 +32,23 @@ var _ = (function() {
         projectsList.push(item);
       }
     });
-    console.log(projectsList);
+
+    // if SAL, get all remaining root tasks; otherwise get project - then check if already ranked and if not add to 'unsorted' array [WORK IN PROGRESS]
+    unsortedItems = [];
+    projectsList.forEach(function(project) {
+      if (project.containsSingletonActions) {
+        project.task.children.forEach(function(task) {
+          if (
+            task.taskStatus === Task.Status.Available ||
+            task.taskStatus === Task.Status.Blocked
+          ) {
+            unsortedItems.push(task);
+          }
+        });
+      }
+    });
+
+    console.log(unsortedItems);
   });
 
   action.validate = function(selection, sender) {
