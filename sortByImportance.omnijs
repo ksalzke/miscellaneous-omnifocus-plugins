@@ -16,6 +16,7 @@ var _ = (function() {
     ignoredTags = config.ignoredTagsForSortByImportance;
     sortedTag = config.sortedTag;
 
+    // GET UNSORTED ITEMS
     // get all remaining projects not in 'maybe' folder
     projectsList = [];
     library.apply(function(item) {
@@ -58,6 +59,26 @@ var _ = (function() {
     });
 
     console.log(unsortedItems);
+
+    // GET SORTED ITEMS
+    sortedItems = [];
+    sortedTag.tasks.forEach(function(item) {
+      if (
+        item.taskStatus === Task.Status.Available ||
+        item.taskStatus === Task.Status.Blocked
+      ) {
+        // push project root tasks & top-level SAL tasks
+        if (item.project !== null) {
+          sortedItems.push(item);
+        } else if (
+          item.containingProject.containsSingletonActions &&
+          item.containingProject.task.children.includes(item)
+        ) {
+          sortedItems.push(item);
+        }
+      }
+    });
+    console.log(sortedItems);
   });
 
   action.validate = function(selection, sender) {
