@@ -13,6 +13,7 @@ var _ = (function() {
     // GET CONFIGURATION INFO
     config = PlugIn.find("com.KaitlinSalzke.config").library("configLibrary");
     ignoredFolders = config.ignoredFoldersForSortByImportance; // NB folders including 'Maybe' will also be ignored
+    sortedTag = config.sortedTag;
 
     // get all remaining projects not in 'maybe' folder
     projectsList = [];
@@ -39,8 +40,9 @@ var _ = (function() {
       if (project.containsSingletonActions) {
         project.task.children.forEach(function(task) {
           if (
-            task.taskStatus === Task.Status.Available ||
-            task.taskStatus === Task.Status.Blocked
+            (task.taskStatus === Task.Status.Available ||
+              task.taskStatus === Task.Status.Blocked) &&
+            !task.tags.includes(sortedTag)
           ) {
             unsortedItems.push(task);
           }
