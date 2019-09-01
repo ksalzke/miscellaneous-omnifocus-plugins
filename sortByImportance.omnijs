@@ -35,7 +35,7 @@ var _ = (function() {
       }
     });
 
-    // if SAL, get all remaining root tasks; otherwise get project - then check if already ranked and if not add to 'unsorted' array [WORK IN PROGRESS]
+    // if SAL, get all remaining root tasks; otherwise get project - then check if already ranked and if not add to 'unsorted' array
     unsortedItems = [];
     projectsList.forEach(function(project) {
       if (project.containsSingletonActions) {
@@ -52,6 +52,8 @@ var _ = (function() {
             unsortedItems.push(task);
           }
         });
+      } else if (!project.task.tags.includes(sortedTag)) {
+        unsortedItems.push(project.task);
       }
     });
 
