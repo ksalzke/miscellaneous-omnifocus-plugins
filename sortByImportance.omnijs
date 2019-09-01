@@ -10,8 +10,10 @@
 }*/
 var _ = (function() {
   var action = new PlugIn.Action(function(selection, sender) {
-    // CONFIGURATION
-    ignoredFolders = []; // NB folders including 'Maybe' will also be ignored
+    // GET CONFIGURATION INFO
+    config = PlugIn.find("com.KaitlinSalzke.config").library("configLibrary");
+    ignoredFolders = config.ignoredFoldersForSortByImportance; // NB folders including 'Maybe' will also be ignored
+
     // get all remaining projects not in 'maybe' folder
     projectsList = [];
     library.apply(function(item) {
