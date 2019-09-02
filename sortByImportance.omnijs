@@ -12,6 +12,7 @@
 var _ = (function() {
   var action = new PlugIn.Action(function(selection, sender) {
     // GET CONFIGURATION INFO
+
     config = PlugIn.find("com.KaitlinSalzke.config").library("configLibrary");
     ignoredFolders = config.ignoredFoldersForSortByImportance; // NB folders including 'Maybe' will also be ignored
     ignoredTags = config.ignoredTagsForSortByImportance;
@@ -20,7 +21,8 @@ var _ = (function() {
     // CREATE SORTING FUNCTIONS TO BE USED LATER
 
     // mergeSort and merge functions adapted from https://github.com/yeb9925/sorting-algorithms-javascript/blob/master/src/merge_sort/merge_sort_recursion.js
-    function mergeSort(unsortedArray) {
+    async function mergeSort(unsortedArray) {
+      // console.log("unsortedArray: " + unsortedArray);
       // No need to sort the array if the array only has one element or empty
       if (unsortedArray.length <= 1) {
         return unsortedArray;
@@ -33,30 +35,24 @@ var _ = (function() {
       const right = unsortedArray.slice(middle);
 
       // Using recursion to combine the left and right
-      return merge(mergeSort(left), mergeSort(right));
+      return merge(await mergeSort(left), await mergeSort(right));
     }
+
     // Merge the two arrays: left and right
     function merge(left, right) {
+      // console.log("merging " + left + " and " + right);
       let resultArray = [],
         leftIndex = 0,
-        rightIndex = 0;
+        rightIndex = 0,
+        whileCount = 0;
 
       // We will concatenate values into the resultArray in order
       while (leftIndex < left.length && rightIndex < right.length) {
+        // whileCount++;
         // prompt user to perform comparison
-        var inputForm = new Form();
+        // console.log("In while loop #" + whileCount);
 
-        checkSwitchField = new Form.Field.Checkbox(
-          "moreImportant",
-          "First more important than last?",
-          true
-        );
-        inputForm.addField(checkSwitchField);
-
-        formPrompt = "1: " + left[leftIndex] + "/n2: " + right[rightIndex];
-        formPromise = inputForm.show(formPrompt, "Continue");
-
-        formPromise.then(function(formObject) {
+        function doComparison() {
           if (left[leftIndex] < right[rightIndex]) {
             resultArray.push(left[leftIndex]);
             leftIndex++; // move left array cursor
@@ -64,85 +60,51 @@ var _ = (function() {
             resultArray.push(right[rightIndex]);
             rightIndex++; // move right array cursor
           }
+        }
 
-          // We need to concat to the resultArray because there will be one element left over after the while loop
-          return resultArray
-            .concat(left.slice(leftIndex))
-            .concat(right.slice(rightIndex));
-        });
-
-        // PROMISE FUNCTION CALLED UPON FORM CANCELLATION
-        formPromise.catch(function(err) {
-          console.log("form cancelled", err.message);
-        });
+        doComparison();
       }
+
+      // We need to concat to the resultArray because there will be one element left over after the while loop
+      return resultArray
+        .concat(left.slice(leftIndex))
+        .concat(right.slice(rightIndex));
     }
 
-    // GET UNSORTED ITEMS
-    // get all remaining projects not in 'maybe' folder
-    projectsList = [];
-    library.apply(function(item) {
-      if (
-        item instanceof Folder &&
-        (/Maybe/.test(item.name) ||
-          (ignoredFolders.length > 0 && ignoredFolders.includes(item)))
-      ) {
-        return ApplyResult.SkipChildren;
-      }
-      if (
-        item instanceof Project &&
-        (item.task.taskStatus === Task.Status.Available ||
-          item.task.taskStatus === Task.Status.Blocked)
-      ) {
-        projectsList.push(item);
-      }
+    mergeSort([
+      332,
+      372,
+      291,
+      244,
+      196,
+      396,
+      386,
+      48,
+      234,
+      405,
+      195,
+      240,
+      265,
+      493,
+      461,
+      15,
+      55,
+      383,
+      476,
+      45,
+      66,
+      434,
+      237,
+      142,
+      119,
+      408,
+      63,
+      439,
+      54,
+      355
+    ]).then(function(response) {
+      console.log(response);
     });
-
-    // if SAL, get all remaining root tasks; otherwise get project - then check if already ranked and if not add to 'unsorted' array
-    unsortedItems = [];
-    projectsList.forEach(function(project) {
-      if (project.containsSingletonActions) {
-        project.task.children.forEach(function(task) {
-          if (
-            (task.taskStatus === Task.Status.Available ||
-              task.taskStatus === Task.Status.Blocked) &&
-            !task.tags.includes(sortedTag) &&
-            (ignoredTags.length > 0 &&
-              !task.tags.some(function(tag) {
-                return ignoredTags.includes(tag);
-              }))
-          ) {
-            unsortedItems.push(task);
-          }
-        });
-      } else if (!project.task.tags.includes(sortedTag)) {
-        unsortedItems.push(project.task);
-      }
-    });
-
-    console.log(unsortedItems);
-
-    // GET SORTED ITEMS
-    sortedItems = [];
-    sortedTag.tasks.forEach(function(item) {
-      if (
-        item.taskStatus === Task.Status.Available ||
-        item.taskStatus === Task.Status.Blocked
-      ) {
-        // push project root tasks & top-level SAL tasks
-        if (item.project !== null) {
-          sortedItems.push(item);
-        } else if (
-          item.containingProject.containsSingletonActions &&
-          item.containingProject.task.children.includes(item)
-        ) {
-          sortedItems.push(item);
-        }
-      }
-    });
-    console.log(sortedItems);
-
-    console.log(mergeSort([3, 1, 5]));
   });
 
   action.validate = function(selection, sender) {
