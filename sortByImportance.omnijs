@@ -35,11 +35,10 @@ var _ = (function() {
     async function merge(left, right) {
       let resultArray = [],
         leftIndex = 0,
-        rightIndex = 0,
+        rightIndex = 0;
 
       // We will concatenate values into the resultArray in order
       while (leftIndex < left.length && rightIndex < right.length) {
-
         function doComparison() {
           console.log("Alert interacted with.");
           if (left[leftIndex] < right[rightIndex]) {
@@ -51,9 +50,12 @@ var _ = (function() {
           }
         }
 
-        new Alert("More important?", "I am a message in the alert.").show(function(result) {
+        doComparison();
+
+        // THE BELOW IS NOT WORKING
+        /* new Alert("More important?", "I am a message in the alert.").show(function(result) {
           doComparison();
-        });
+        }); */
       }
 
       // We need to concat to the resultArray because there will be one element left over after the while loop
