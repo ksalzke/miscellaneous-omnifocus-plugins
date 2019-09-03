@@ -59,15 +59,17 @@ var _ = (function() {
     result = asyncMergeSort(
       unsortedArray,
       function(a, b, callback) {
-        new Alert("More important?", "I am a message in the alert.").show(
-          function(result) {
-            if (a < b) {
-              return callback(null, -1);
-            } else {
-              return callback(null, 1);
-            }
+        var alert = new Alert("Comparison needed:", "Which is more important");
+        alert.addOption(a.toString());
+        alert.addOption(b.toString());
+        alert.addOption("Cancel");
+        alert.show(function(result) {
+          if (a < b) {
+            return callback(null, -1);
+          } else {
+            return callback(null, 1);
           }
-        );
+        });
       },
       function(err, sorted) {
         if (err) {
