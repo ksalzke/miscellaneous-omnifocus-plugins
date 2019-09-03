@@ -95,14 +95,21 @@ var _ = (function() {
     });
     console.log(sortedItems);
 
-    unsortedArray = [5, 4, 1, 2];
+    unsortedArray = unsortedItems.slice(0, 4);
 
     result = asyncMergeSort(
       unsortedArray,
       function(a, b, callback) {
-        var alert = new Alert("Comparison needed:", "Which is more important");
-        alert.addOption(a.toString());
-        alert.addOption(b.toString());
+        var alert = new Alert(
+          "Comparison needed:",
+          "Is \n\n'" +
+            a.name +
+            "'\n\n more important than \n\n'" +
+            b.name +
+            "'\n\n?"
+        );
+        alert.addOption("Yes");
+        alert.addOption("No");
         alert.addOption("Cancel");
         alert.show(function(result) {
           if (result == 0) {
