@@ -64,10 +64,12 @@ var _ = (function() {
         alert.addOption(b.toString());
         alert.addOption("Cancel");
         alert.show(function(result) {
-          if (a < b) {
+          if (result == 0) {
             return callback(null, -1);
-          } else {
+          } else if (result == 1) {
             return callback(null, 1);
+          } else {
+            console.log("Alert cancelled.");
           }
         });
       },
