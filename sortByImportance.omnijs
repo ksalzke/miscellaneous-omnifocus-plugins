@@ -11,59 +11,6 @@
 
 var _ = (function() {
   var action = new PlugIn.Action(function(selection, sender) {
-    // CREATE SORTING FUNCTIONS TO BE USED LATER
-
-    // mergeSort and merge functions adapted from https://github.com/yeb9925/sorting-algorithms-javascript/blob/master/src/merge_sort/merge_sort_recursion.js
-    async function mergeSort(unsortedArray) {
-      // console.log("unsortedArray: " + unsortedArray);
-      // No need to sort the array if the array only has one element or empty
-      if (unsortedArray.length <= 1) {
-        return unsortedArray;
-      }
-      // In order to divide the array in half, we need to figure out the middle
-      const middle = Math.floor(unsortedArray.length / 2);
-
-      // This is where we will be dividing the array into left and right
-      const left = unsortedArray.slice(0, middle);
-      const right = unsortedArray.slice(middle);
-
-      // Using recursion to combine the left and right
-      return await merge(await mergeSort(left), await mergeSort(right));
-    }
-
-    // Merge the two arrays: left and right
-    async function merge(left, right) {
-      let resultArray = [],
-        leftIndex = 0,
-        rightIndex = 0;
-
-      // We will concatenate values into the resultArray in order
-      while (leftIndex < left.length && rightIndex < right.length) {
-        function doComparison() {
-          console.log("Alert interacted with.");
-          if (left[leftIndex] < right[rightIndex]) {
-            resultArray.push(left[leftIndex]);
-            leftIndex++; // move left array cursor
-          } else {
-            resultArray.push(right[rightIndex]);
-            rightIndex++; // move right array cursor
-          }
-        }
-
-        doComparison();
-
-        // THE BELOW IS NOT WORKING
-        /* new Alert("More important?", "I am a message in the alert.").show(function(result) {
-          doComparison();
-        }); */
-      }
-
-      // We need to concat to the resultArray because there will be one element left over after the while loop
-      return resultArray
-        .concat(left.slice(leftIndex))
-        .concat(right.slice(rightIndex));
-    }
-
     mergeSort([
       332,
       372,
@@ -109,3 +56,54 @@ var _ = (function() {
   return action;
 })();
 _;
+
+// CREATE SORTING FUNCTIONS TO BE USED LATER
+
+// mergeSort and merge functions adapted from https://github.com/yeb9925/sorting-algorithms-javascript/blob/master/src/merge_sort/merge_sort_recursion.js
+async function mergeSort(unsortedArray) {
+  // console.log("unsortedArray: " + unsortedArray);
+  // No need to sort the array if the array only has one element or empty
+  if (unsortedArray.length <= 1) {
+    return unsortedArray;
+  }
+  // In order to divide the array in half, we need to figure out the middle
+  const middle = Math.floor(unsortedArray.length / 2);
+
+  // This is where we will be dividing the array into left and right
+  const left = unsortedArray.slice(0, middle);
+  const right = unsortedArray.slice(middle);
+
+  // Using recursion to combine the left and right
+  return await merge(await mergeSort(left), await mergeSort(right));
+}
+
+// Merge the two arrays: left and right
+async function merge(left, right) {
+  let resultArray = [],
+    leftIndex = 0,
+    rightIndex = 0;
+
+  async function recursiveWhileLoop() {
+    if (leftIndex < left.length && rightIndex < right.length) {
+      new Alert("More important?", "I am a message in the alert.").show(
+        function(result) {
+          if (left[leftIndex] < right[rightIndex]) {
+            resultArray.push(left[leftIndex]);
+            leftIndex++; // move left array cursor
+          } else {
+            resultArray.push(right[rightIndex]);
+            rightIndex++; // move right array cursor
+          }
+        }
+      );
+    }
+    await recursiveWhileLoop();
+  }
+
+  await recursiveWhileLoop();
+
+  // We need to concat to the resultArray because there will be one element left over after the while loop
+  return resultArray
+    .concat(left.slice(leftIndex))
+    .concat(right.slice(rightIndex));
+}
