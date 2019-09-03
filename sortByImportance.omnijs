@@ -97,7 +97,7 @@ var _ = (function() {
 
     unsortedArray = unsortedItems.slice(0, 4);
 
-    result = asyncMergeSort(
+    asyncMergeSort(
       unsortedArray,
       function(a, b, callback) {
         var alert = new Alert(
@@ -125,11 +125,16 @@ var _ = (function() {
         if (err) {
           alert("Oh dear, an error occurred.");
         }
-        console.log(sorted);
+        result = sorted;
+        console.log(result);
+
+        result.forEach(function(item) {
+          item.apply(function(task) {
+            task.addTag(sortedTag);
+          });
+        });
       }
     );
-
-    // console.log(result);
   });
 
   action.validate = function(selection, sender) {
