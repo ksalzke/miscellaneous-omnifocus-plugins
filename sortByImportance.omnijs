@@ -9,9 +9,21 @@
 	"shortLabel": "Sort By Importance"
 }*/
 
+var later;
+
 var _ = (function() {
   var action = new PlugIn.Action(function(selection, sender) {
-    mergeSort([
+    if (typeof setImmediate === "undefined") {
+      later = function(fn) {
+        return Timer.once(0, fn);
+      };
+    } else {
+      later = setImmediate;
+    }
+
+    unsortedArray = [3, 1, 5];
+
+    /* unsortedArray = [
       332,
       372,
       291,
@@ -42,9 +54,30 @@ var _ = (function() {
       439,
       54,
       355
-    ]).then(function(response) {
-      console.log(response);
-    });
+    ]; */
+
+    result = asyncMergeSort(
+      unsortedArray,
+      function(a, b, callback) {
+        new Alert("More important?", "I am a message in the alert.").show(
+          function(result) {
+            if (a < b) {
+              return callback(null, -1);
+            } else {
+              return callback(null, 1);
+            }
+          }
+        );
+      },
+      function(err, sorted) {
+        if (err) {
+          alert("Oh dear, an error occurred.");
+        }
+        console.log(sorted);
+      }
+    );
+
+    // console.log(result);
   });
 
   action.validate = function(selection, sender) {
@@ -57,53 +90,81 @@ var _ = (function() {
 })();
 _;
 
-// CREATE SORTING FUNCTIONS TO BE USED LATER
-
-// mergeSort and merge functions adapted from https://github.com/yeb9925/sorting-algorithms-javascript/blob/master/src/merge_sort/merge_sort_recursion.js
-async function mergeSort(unsortedArray) {
-  // console.log("unsortedArray: " + unsortedArray);
-  // No need to sort the array if the array only has one element or empty
-  if (unsortedArray.length <= 1) {
-    return unsortedArray;
+function asyncMergeSort(items, comparator, callback) {
+  // dice into lists of length 1, which are considered to be
+  // internally sorted
+  var lists = [];
+  for (var i = 0; i < items.length; i++) {
+    lists.push([items[i]]);
   }
-  // In order to divide the array in half, we need to figure out the middle
-  const middle = Math.floor(unsortedArray.length / 2);
 
-  // This is where we will be dividing the array into left and right
-  const left = unsortedArray.slice(0, middle);
-  const right = unsortedArray.slice(middle);
+  // if there are no items, we're done
+  if (!lists.length) {
+    return callback(null, []);
+  }
 
-  // Using recursion to combine the left and right
-  return await merge(await mergeSort(left), await mergeSort(right));
-}
+  // Make the first merging pass
+  return pass();
 
-// Merge the two arrays: left and right
-async function merge(left, right) {
-  let resultArray = [],
-    leftIndex = 0,
-    rightIndex = 0;
-
-  async function recursiveWhileLoop() {
-    if (leftIndex < left.length && rightIndex < right.length) {
-      new Alert("More important?", "I am a message in the alert.").show(
-        function(result) {
-          if (left[leftIndex] < right[rightIndex]) {
-            resultArray.push(left[leftIndex]);
-            leftIndex++; // move left array cursor
-          } else {
-            resultArray.push(right[rightIndex]);
-            rightIndex++; // move right array cursor
-          }
-        }
-      );
+  function pass() {
+    var x = 0;
+    var newLists = [];
+    if (lists.length === 1) {
+      // one list left, we're done
+      return callback(null, lists[0]);
     }
-    await recursiveWhileLoop();
+    return merge(x, x + 1);
+
+    function merge() {
+      if (x + 1 >= lists.length) {
+        if (x + 1 == lists.length) {
+          newLists.push(lists[x]);
+        }
+        lists = newLists;
+        return later(pass);
+      }
+
+      var listOne = lists[x];
+      var listTwo = lists[x + 1];
+      var indexOne = 0;
+      var indexTwo = 0;
+      var newList = [];
+      // compare the first pair
+      consider();
+
+      function consider() {
+        if (indexOne === listOne.length) {
+          if (indexTwo === listTwo.length) {
+            newLists.push(newList);
+            x += 2;
+            return merge();
+          }
+          newList.push(listTwo[indexTwo++]);
+          // make async to avoid stack crashes
+          return later(consider);
+        } else if (indexTwo === listTwo.length) {
+          newList.push(listOne[indexOne++]);
+          // make async to avoid stack crashes
+          return later(consider);
+        }
+        return comparator(listOne[indexOne], listTwo[indexTwo], function(
+          err,
+          value
+        ) {
+          if (err) {
+            return callback(err);
+          }
+          if (value === -1) {
+            newList.push(listOne[indexOne++]);
+          } else if (value === 1) {
+            newList.push(listTwo[indexTwo++]);
+          } else {
+            newList.push(listOne[indexOne++]);
+            newList.push(listTwo[indexTwo++]);
+          }
+          return consider();
+        });
+      }
+    }
   }
-
-  await recursiveWhileLoop();
-
-  // We need to concat to the resultArray because there will be one element left over after the while loop
-  return resultArray
-    .concat(left.slice(leftIndex))
-    .concat(right.slice(rightIndex));
 }
