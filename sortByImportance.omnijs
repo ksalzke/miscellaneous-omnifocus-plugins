@@ -105,10 +105,8 @@ var _ = (function() {
       }
     });
 
-    unsortedArray = unsortedItems.slice(0, 4);
-
     asyncMergeSort(
-      unsortedArray,
+      unsortedItems,
       function(a, b, callback) {
         var alert = new Alert(
           "Comparison needed:",
