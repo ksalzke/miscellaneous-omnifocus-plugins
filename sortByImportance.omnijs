@@ -73,11 +73,12 @@ var _ = (function() {
       }
     });
 
-    console.log(unsortedItems);
-
     // GET SORTED ITEMS
     sortedItems = [];
     sortedTag.tasks.forEach(function(item) {
+      item.apply(function(task) {
+        task.removeTag(sortedTag);
+      });
       if (
         item.taskStatus === Task.Status.Available ||
         item.taskStatus === Task.Status.Blocked
@@ -93,7 +94,6 @@ var _ = (function() {
         }
       }
     });
-    console.log(sortedItems);
 
     unsortedArray = unsortedItems.slice(0, 4);
 
@@ -121,6 +121,7 @@ var _ = (function() {
           }
         });
       },
+      sortedItems,
       function(err, sorted) {
         if (err) {
           alert("Oh dear, an error occurred.");
@@ -147,12 +148,15 @@ var _ = (function() {
 })();
 _;
 
-function asyncMergeSort(items, comparator, callback) {
+function asyncMergeSort(items, comparator, alreadySorted, callback) {
   // dice into lists of length 1, which are considered to be
   // internally sorted
   var lists = [];
   for (var i = 0; i < items.length; i++) {
     lists.push([items[i]]);
+  }
+  if (alreadySorted !== null) {
+    lists.push(alreadySorted);
   }
 
   // if there are no items, we're done
