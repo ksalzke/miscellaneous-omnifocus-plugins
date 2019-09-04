@@ -74,9 +74,19 @@ var _ = (function() {
     });
 
     // GET SORTED ITEMS
+
+    // clear backup tag if still exists
+    backupCopyTag = tagNamed("ZZ_Sorted") || new Tag("ZZ_Sorted)");
+    backupCopyTag.tasks.forEach(function(item) {
+      item.apply(function(task) {
+        task.removeTag(backupCopyTag);
+      });
+    });
+
     sortedItems = [];
     sortedTag.tasks.forEach(function(item) {
       item.apply(function(task) {
+        task.addTag(backupCopyTag);
         task.removeTag(sortedTag);
       });
       if (
