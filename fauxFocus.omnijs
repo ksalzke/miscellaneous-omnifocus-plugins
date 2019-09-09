@@ -29,6 +29,13 @@ var _ = (function() {
     selection.projects.forEach(function(project) {
       projectsToFocus.push(project);
     });
+    selection.folders.forEach(function(folder) {
+      folder.apply(function(item) {
+        if (item instanceof Project) {
+          projectsToFocus.push(item);
+        }
+      });
+    });
 
     projectsList.forEach(function(project) {
       if (!projectsToFocus.includes(project)) {
