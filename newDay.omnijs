@@ -24,6 +24,25 @@ var _ = (function() {
       task.addTag(todayTag);
       task.removeTag(tomorrowTag);
     });
+
+    //// Move tomorrow's tasks from named day to 'Tomorrow'
+    // get tag with the name of the weekday tomorrow
+    timeToAdd = new DateComponents();
+    timeToAdd.day = 1;
+    tomorrow = Calendar.current.dateByAddingDateComponents(
+      new Date(),
+      timeToAdd
+    );
+    tomorrowDay = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(
+      tomorrow
+    );
+    tomorrowWeekdayTag = functionLibrary.findTag(tomorrowDay);
+
+    // Replace tag
+    tomorrowWeekdayTag.tasks.forEach(function(task) {
+      task.addTag(tomorrowTag);
+      task.removeTag(tomorrowWeekdayTag);
+    });
   });
 
   action.validate = function(selection, sender) {
