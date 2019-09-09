@@ -19,6 +19,7 @@ var _ = (function() {
     var todayTag = functionLibrary.findTag("Today");
     var tomorrowTag = functionLibrary.findTag("Tomorrow");
 
+    // Move tasks from 'Tomorrow' to 'Today'
     tomorrowTag.tasks.forEach(function(task) {
       task.addTag(todayTag);
       task.removeTag(tomorrowTag);
