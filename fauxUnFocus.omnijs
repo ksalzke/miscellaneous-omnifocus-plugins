@@ -13,9 +13,9 @@ var _ = (function() {
     unfocusedTag = tagNamed("Unfocused") || new Tag("Unfocused");
 
     unfocusedTag.tasks.forEach(function(task) {
-      task.removeTag(unfocusedTag);
       task.project.status = Project.Status.Active;
     });
+    deleteObject(unfocusedTag);
   });
 
   action.validate = function(selection, sender) {
