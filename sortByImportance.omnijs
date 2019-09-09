@@ -21,6 +21,7 @@ var _ = (function() {
     ignoredFolders = config.ignoredFoldersForSortByImportance; // NB folders including 'Maybe' will also be ignored
     ignoredTags = config.ignoredTagsForSortByImportance;
     sortedTag = config.sortedTag;
+    backupCopyTag = config.backupCopyTag;
 
     // SET UP FOR asyncMergeSort
 
@@ -78,7 +79,6 @@ var _ = (function() {
     // GET SORTED ITEMS
 
     // clear backup tag if still exists
-    backupCopyTag = tagNamed("ZZ_Sorted") || new Tag("ZZ_Sorted)");
     backupCopyTag.tasks.forEach(function(item) {
       item.apply(function(task) {
         task.removeTag(backupCopyTag);
