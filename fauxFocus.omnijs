@@ -14,7 +14,10 @@ var _ = (function() {
     // action code
     // selection options: tasks, projects, folders, tags
     selection.projects.forEach(function(project) {
-      if (project.task.taskStatus === Task.Status.Available) {
+      if (
+        project.task.taskStatus === Task.Status.Available ||
+        project.task.taskStatus === Task.Status.Blocked
+      ) {
         project.task.addTag(unfocusedTag);
         project.status = Project.Status.OnHold;
       }
