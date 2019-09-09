@@ -15,13 +15,14 @@ var _ = (function() {
     functionLibrary = PlugIn.find("com.KaitlinSalzke.functionLibrary").library(
       "functionLibrary"
     );
-    // GET CONFIGURATION INFO
-    config = PlugIn.find("com.KaitlinSalzke.config").library("configLibrary");
-    var tomorrowTag = config.tomorrowTag;
-    var todayTag = config.todayTag;
 
-    // bring forward 'Tomorrow' tasks to 'Today'
-    functionLibrary.replaceTag(tomorrowTag.tasks, tomorrowTag, todayTag);
+    var todayTag = functionLibrary.findTag("Today");
+    var tomorrowTag = functionLibrary.findTag("Tomorrow");
+
+    tomorrowTag.tasks.forEach(function(task) {
+      task.addTag(todayTag);
+      task.removeTag(tomorrowTag);
+    });
   });
 
   action.validate = function(selection, sender) {
