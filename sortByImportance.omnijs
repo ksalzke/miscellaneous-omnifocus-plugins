@@ -9,56 +9,31 @@
 	"shortLabel": "Sort By Importance"
 }*/
 
+// CREDIT: The async mergesort used here is adapted from https://github.com/punkave/async-merge-sort.
+
+var later;
+
 var _ = (function() {
   var action = new PlugIn.Action(function(selection, sender) {
     // GET CONFIGURATION INFO
+
     config = PlugIn.find("com.KaitlinSalzke.config").library("configLibrary");
     ignoredFolders = config.ignoredFoldersForSortByImportance; // NB folders including 'Maybe' will also be ignored
     ignoredTags = config.ignoredTagsForSortByImportance;
     sortedTag = config.sortedTag;
 
-    // CREATE SORTING FUNCTIONS TO BE USED LATER
+    // SET UP FOR asyncMergeSort
 
-    // mergeSort and merge functions adapted from https://github.com/yeb9925/sorting-algorithms-javascript/blob/master/src/merge_sort/merge_sort_recursion.js
-    function mergeSort(unsortedArray) {
-      // No need to sort the array if the array only has one element or empty
-      if (unsortedArray.length <= 1) {
-        return unsortedArray;
-      }
-      // In order to divide the array in half, we need to figure out the middle
-      const middle = Math.floor(unsortedArray.length / 2);
-
-      // This is where we will be dividing the array into left and right
-      const left = unsortedArray.slice(0, middle);
-      const right = unsortedArray.slice(middle);
-
-      // Using recursion to combine the left and right
-      return merge(mergeSort(left), mergeSort(right));
-    }
-    // Merge the two arrays: left and right
-    function merge(left, right) {
-      let resultArray = [],
-        leftIndex = 0,
-        rightIndex = 0;
-
-      // We will concatenate values into the resultArray in order
-      while (leftIndex < left.length && rightIndex < right.length) {
-        if (left[leftIndex] < right[rightIndex]) {
-          resultArray.push(left[leftIndex]);
-          leftIndex++; // move left array cursor
-        } else {
-          resultArray.push(right[rightIndex]);
-          rightIndex++; // move right array cursor
-        }
-      }
-
-      // We need to concat to the resultArray because there will be one element left over after the while loop
-      return resultArray
-        .concat(left.slice(leftIndex))
-        .concat(right.slice(rightIndex));
+    if (typeof setImmediate === "undefined") {
+      later = function(fn) {
+        return Timer.once(0, fn);
+      };
+    } else {
+      later = setImmediate;
     }
 
-    // GET UNSORTED ITEMS
+    // // GET UNSORTED ITEMS
+
     // get all remaining projects not in 'maybe' folder
     projectsList = [];
     library.apply(function(item) {
@@ -100,11 +75,22 @@ var _ = (function() {
       }
     });
 
-    console.log(unsortedItems);
-
     // GET SORTED ITEMS
+
+    // clear backup tag if still exists
+    backupCopyTag = tagNamed("ZZ_Sorted") || new Tag("ZZ_Sorted)");
+    backupCopyTag.tasks.forEach(function(item) {
+      item.apply(function(task) {
+        task.removeTag(backupCopyTag);
+      });
+    });
+
     sortedItems = [];
     sortedTag.tasks.forEach(function(item) {
+      item.apply(function(task) {
+        task.addTag(backupCopyTag);
+        task.removeTag(sortedTag);
+      });
       if (
         item.taskStatus === Task.Status.Available ||
         item.taskStatus === Task.Status.Blocked
@@ -120,9 +106,46 @@ var _ = (function() {
         }
       }
     });
-    console.log(sortedItems);
 
-    console.log(mergeSort([3, 1, 5]));
+    asyncMergeSort(
+      unsortedItems,
+      function(a, b, callback) {
+        var alert = new Alert(
+          "Comparison needed:",
+          "Is \n\n'" +
+            a.name +
+            "'\n\n more important than \n\n'" +
+            b.name +
+            "'\n\n?"
+        );
+        alert.addOption("Yes");
+        alert.addOption("No");
+        alert.addOption("Cancel");
+        alert.show(function(result) {
+          if (result == 0) {
+            return callback(null, -1);
+          } else if (result == 1) {
+            return callback(null, 1);
+          } else {
+            console.log("Alert cancelled.");
+          }
+        });
+      },
+      sortedItems,
+      function(err, sorted) {
+        if (err) {
+          alert("Oh dear, an error occurred.");
+        }
+        result = sorted;
+        console.log(result);
+
+        result.forEach(function(item) {
+          item.apply(function(task) {
+            task.addTag(sortedTag);
+          });
+        });
+      }
+    );
   });
 
   action.validate = function(selection, sender) {
@@ -134,3 +157,85 @@ var _ = (function() {
   return action;
 })();
 _;
+
+function asyncMergeSort(items, comparator, alreadySorted, callback) {
+  // dice into lists of length 1, which are considered to be
+  // internally sorted
+  var lists = [];
+  for (var i = 0; i < items.length; i++) {
+    lists.push([items[i]]);
+  }
+  if (alreadySorted !== null) {
+    lists.push(alreadySorted);
+  }
+
+  // if there are no items, we're done
+  if (!lists.length) {
+    return callback(null, []);
+  }
+
+  // Make the first merging pass
+  return pass();
+
+  function pass() {
+    var x = 0;
+    var newLists = [];
+    if (lists.length === 1) {
+      // one list left, we're done
+      return callback(null, lists[0]);
+    }
+    return merge(x, x + 1);
+
+    function merge() {
+      if (x + 1 >= lists.length) {
+        if (x + 1 == lists.length) {
+          newLists.push(lists[x]);
+        }
+        lists = newLists;
+        return later(pass);
+      }
+
+      var listOne = lists[x];
+      var listTwo = lists[x + 1];
+      var indexOne = 0;
+      var indexTwo = 0;
+      var newList = [];
+      // compare the first pair
+      consider();
+
+      function consider() {
+        if (indexOne === listOne.length) {
+          if (indexTwo === listTwo.length) {
+            newLists.push(newList);
+            x += 2;
+            return merge();
+          }
+          newList.push(listTwo[indexTwo++]);
+          // make async to avoid stack crashes
+          return later(consider);
+        } else if (indexTwo === listTwo.length) {
+          newList.push(listOne[indexOne++]);
+          // make async to avoid stack crashes
+          return later(consider);
+        }
+        return comparator(listOne[indexOne], listTwo[indexTwo], function(
+          err,
+          value
+        ) {
+          if (err) {
+            return callback(err);
+          }
+          if (value === -1) {
+            newList.push(listOne[indexOne++]);
+          } else if (value === 1) {
+            newList.push(listTwo[indexTwo++]);
+          } else {
+            newList.push(listOne[indexOne++]);
+            newList.push(listTwo[indexTwo++]);
+          }
+          return consider();
+        });
+      }
+    }
+  }
+}
