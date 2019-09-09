@@ -17,6 +17,14 @@ var _ = (function() {
     });
     return targetTag;
   };
+
+  functionLibrary.replaceTag = function(tasksArray, oldTag, newTag) {
+    tasksArray.forEach(function(task) {
+      task.addTag(oldTag);
+      task.removeTag(newTag);
+    });
+  };
+
   return functionLibrary;
 })();
 _;
