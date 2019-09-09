@@ -9,6 +9,8 @@
 	"shortLabel": "Sort By Importance"
 }*/
 
+// CREDIT: The async mergesort used here is adapted from https://github.com/punkave/async-merge-sort.
+
 var later;
 
 var _ = (function() {
