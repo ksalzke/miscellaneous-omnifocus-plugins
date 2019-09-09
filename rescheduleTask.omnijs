@@ -22,11 +22,17 @@ var _ = (function() {
     // show form to select follow up method
     var inputForm = new Form();
 
+    // generate labels for popup menu
+    rescheduleChoicesLabels = [];
+    rescheduleChoices.forEach(function(tag) {
+      rescheduleChoicesLabels.push(tag.name);
+    });
+
     popupMenu = new Form.Field.Option(
       "rescheduleDate",
       "Date to reschedule to",
       rescheduleChoices,
-      null,
+      rescheduleChoicesLabels,
       tomorrowTag
     );
 
