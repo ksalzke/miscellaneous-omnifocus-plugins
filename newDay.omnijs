@@ -1,0 +1,33 @@
+/*{
+"type": "action",
+"targets": ["omnifocus"],
+"author": "Kaitlin Salzke",
+"identifier": "com.KaitlinSalzke.newDay",
+"version": "1.0",
+"description": "'This action will set up for a new day.",
+"label": "☀️ New Day",
+"shortLabel": "New Day"
+}*/
+
+var _ = (function() {
+  var action = new PlugIn.Action(function(selection, sender) {
+    // GET FUNCTION LIBRARY
+    functionLibrary = PlugIn.find("com.KaitlinSalzke.functionLibrary").library(
+      "functionLibrary"
+    );
+    // GET CONFIGURATION INFO
+    config = PlugIn.find("com.KaitlinSalzke.config").library("configLibrary");
+    var tomorrowTag = config.tomorrowTag;
+    var todayTag = config.todayTag;
+
+    // bring forward 'Tomorrow' tasks to 'Today'
+    functionLibrary.replaceTag(tomorrowTag.tasks, tomorrowTag, todayTag);
+  });
+
+  action.validate = function(selection, sender) {
+    return true;
+  };
+
+  return action;
+})();
+_;
