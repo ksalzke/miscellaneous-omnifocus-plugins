@@ -11,13 +11,27 @@
 var _ = (function() {
   var action = new PlugIn.Action(function(selection, sender) {
     unfocusedTag = tagNamed("Unfocused") || new Tag("Unfocused");
-    // action code
-    // selection options: tasks, projects, folders, tags
-    selection.projects.forEach(function(project) {
+
+    // get list of all projects
+    projectsList = [];
+    library.apply(function(item) {
       if (
-        project.task.taskStatus === Task.Status.Available ||
-        project.task.taskStatus === Task.Status.Blocked
+        item instanceof Project &&
+        (item.task.taskStatus === Task.Status.Available ||
+          item.task.taskStatus === Task.Status.Blocked)
       ) {
+        projectsList.push(item);
+      }
+    });
+
+    // get list of selected projects
+    projectsToFocus = [];
+    selection.projects.forEach(function(project) {
+      projectsToFocus.push(project);
+    });
+
+    projectsList.forEach(function(project) {
+      if (!projectsToFocus.includes(project)) {
         project.task.addTag(unfocusedTag);
         project.status = Project.Status.OnHold;
       }
