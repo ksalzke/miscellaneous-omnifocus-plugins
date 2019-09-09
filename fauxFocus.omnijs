@@ -1,0 +1,32 @@
+/*{
+	"type": "action",
+	"targets": ["omnifocus"],
+	"author": "Kaitlin Salzke",
+	"identifier": "com.KaitlinSalzke.fauxFocus",
+	"version": "1.0",
+	"description": "A 'focus' mode.",
+	"label": "Faux Focus",
+	"shortLabel": "Faux Focus"
+}*/
+var _ = (function() {
+  var action = new PlugIn.Action(function(selection, sender) {
+    unfocusedTag = tagNamed("Unfocused") || new Tag("Unfocused");
+    // action code
+    // selection options: tasks, projects, folders, tags
+    selection.projects.forEach(function(project) {
+      if (project.task.taskStatus === Task.Status.Available) {
+        project.task.addTag(unfocusedTag);
+        project.status = Project.Status.OnHold;
+      }
+    });
+  });
+
+  action.validate = function(selection, sender) {
+    // validation code
+    // selection options: tasks, projects, folders, tags
+    return selection.projects.length > 0 || selection.folders.length > 0;
+  };
+
+  return action;
+})();
+_;
