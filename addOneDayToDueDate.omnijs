@@ -19,7 +19,6 @@ var _ = (function() {
 
     tasksToChange = selection.tasks.concat(tasksToChange);
 
-    // set default due time
     tasksToChange.forEach(function(task) {
       // get existing due date
       existingDueDate = task.effectiveDueDate;
