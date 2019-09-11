@@ -12,6 +12,12 @@ var _ = (function() {
   var action = new PlugIn.Action(function(selection, sender) {
     var tasksToChange = [];
 
+    // get default due time to use if task has no due date
+    defaultDueTime = settings.defaultObjectForKey("DefaultDueTime");
+    defaultDueTimeSplit = defaultDueTime.split(":");
+    defaultDueHours = defaultDueTimeSplit[0];
+    defaultDueMinutes = defaultDueTimeSplit[1];
+
     // get 'task' for each selected project
     selection.projects.forEach(function(project) {
       tasksToChange.push(project.task);
@@ -26,6 +32,8 @@ var _ = (function() {
       // if no due date, use now as starting point; otherwise use existing due date
       if (existingDueDate == null) {
         startingDueDate = new Date();
+        startingDueDate.setHours(defaultDueHours);
+        startingDueDate.setMinutes(defaultDueMinutes);
       } else {
         startingDueDate = existingDueDate;
       }
