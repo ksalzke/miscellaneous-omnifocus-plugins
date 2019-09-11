@@ -1,0 +1,53 @@
+/*{
+	"type": "action",
+	"targets": ["omnifocus"],
+	"author": "Kaitlin Salzke",
+	"identifier": "com.KaitlinSalzke.addOneDayToDueDate",
+	"version": "1.0",
+	"description": "Increases the selected action due date by one day.",
+	"label": "Add One Day To Due Date",
+	"shortLabel": "Add One Day To Due Date"
+}*/
+var _ = (function() {
+  var action = new PlugIn.Action(function(selection, sender) {
+    var tasksToChange = [];
+
+    // get 'task' for each selected project
+    selection.projects.forEach(function(project) {
+      tasksToChange.push(project.task);
+    });
+
+    tasksToChange = selection.tasks.concat(tasksToChange);
+
+    // set default due time
+    tasksToChange.forEach(function(task) {
+      // get existing due date
+      existingDueDate = task.dueDate;
+
+      // if no due date, use now as starting point; otherwise use existing due date
+      if (existingDueDate == null) {
+        startingDueDate = new Date();
+      } else {
+        startingDueDate = existingDueDate;
+      }
+
+      // add one day to get new due date
+      timeToAdd = new DateComponents();
+      timeToAdd.day = 1;
+      newDueDate = Calendar.current.dateByAddingDateComponents(
+        startingDueDate,
+        timeToAdd
+      );
+
+      // set the due date of the task
+      task.dueDate = newDueDate;
+    });
+  });
+
+  action.validate = function(selection, sender) {
+    return selection.tasks.length > 0 || selection.projects.length > 0;
+  };
+
+  return action;
+})();
+_;
