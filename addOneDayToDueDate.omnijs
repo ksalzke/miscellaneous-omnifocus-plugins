@@ -22,7 +22,7 @@ var _ = (function() {
     // set default due time
     tasksToChange.forEach(function(task) {
       // get existing due date
-      existingDueDate = task.dueDate;
+      existingDueDate = task.effectiveDueDate;
 
       // if no due date, use now as starting point; otherwise use existing due date
       if (existingDueDate == null) {
