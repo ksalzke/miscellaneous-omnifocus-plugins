@@ -18,7 +18,8 @@ var _ = (function() {
       if (
         item instanceof Project &&
         (item.task.taskStatus === Task.Status.Available ||
-          item.task.taskStatus === Task.Status.Blocked)
+          (item.task.taskStatus === Task.Status.Blocked &&
+            item.status !== Project.Status.OnHold))
       ) {
         projectsList.push(item);
       }
