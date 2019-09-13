@@ -30,7 +30,6 @@ var _ = (function() {
     var createdByRegexResult = createdByRegex.exec(task.note);
 
     if (createdByRegexResult != null) {
-      console.log("Created by another task!");
       // for each captured task ID
       prerequisiteTaskId = createdByRegexResult[1];
       // get the task with that ID
@@ -58,10 +57,13 @@ var _ = (function() {
           }
         });
         // remove the prerequisite tag from the dependant task
-        dependantTask.note = dependantTask.note.replace(
-          "[PREREQUISITE: omnifocus:///task/" + prerequisiteTaskId + "]",
-          ""
-        );
+        regexString =
+          "[PREREQUISITE: omnifocus:///task/" + prerequisiteTaskId + "].+";
+        RegExp.quote = function(str) {
+          return str.replace(/([?*^$[\]\\(){}|-])/g, "\\$1");
+        };
+        regexForNoteSearch = new RegExp(RegExp.quote(regexString));
+        dependantTask.note = dependantTask.note.replace(regexForNoteSearch, "");
         // check whether any remaining prerequisite tasks listed in the note (i.e. whether all prerequisites completed) - and if so
         if (!/\[PREREQUISITE:/.test(dependantTask.note)) {
           // if no remaining prerequisites, remove 'Waiting' tag from dependant task
