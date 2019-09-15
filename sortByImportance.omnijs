@@ -22,6 +22,7 @@ var _ = (function() {
     ignoredTags = config.ignoredTagsForSortByImportance;
     sortedTag = config.sortedTag;
     backupCopyTag = config.backupCopyTag;
+    parentSortTag = config.parentSortTag;
 
     // SET UP FOR asyncMergeSort
 
@@ -140,6 +141,7 @@ var _ = (function() {
         console.log(result);
 
         result.forEach(function(item) {
+          item.addTag(parentSortTag);
           item.apply(function(task) {
             task.addTag(sortedTag);
           });
