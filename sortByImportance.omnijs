@@ -16,13 +16,19 @@ var later;
 var _ = (function() {
   var action = new PlugIn.Action(function(selection, sender) {
     // GET CONFIGURATION INFO
-
-    config = PlugIn.find("com.KaitlinSalzke.config").library("configLibrary");
+    /* config = PlugIn.find("com.KaitlinSalzke.config").library("configLibrary");
     ignoredFolders = config.ignoredFoldersForSortByImportance; // NB folders including 'Maybe' will also be ignored
     ignoredTags = config.ignoredTagsForSortByImportance;
     sortedTag = config.sortedTag;
     backupCopyTag = config.backupCopyTag;
-    parentSortTag = config.parentSortTag;
+    parentSortTag = config.parentSortTag; */
+    ignoredFolders = [folderNamed("🏢 Bush & Campbell")];
+    ignoredTags = [tagNamed("Activity Type").tagNamed("⏳ Waiting")].concat(
+      tagNamed("Activity Type").tagNamed("⏳ Waiting").children
+    );
+    sortedTag = tagNamed("·");
+    backupCopyTag = tagNamed("ZZ_Sorted") || new Tag("ZZ_Sorted");
+    parentSortTag = tagNamed("I");
 
     // SET UP FOR asyncMergeSort
 
@@ -87,10 +93,10 @@ var _ = (function() {
     });
 
     sortedItems = [];
-    sortedTag.tasks.forEach(function(item) {
+    parentSortTag.tasks.forEach(function(item) {
       item.apply(function(task) {
         task.addTag(backupCopyTag);
-        task.removeTag(sortedTag);
+        task.removeTags([sortedTag, parentSortTag]);
       });
       if (
         item.taskStatus === Task.Status.Available ||
