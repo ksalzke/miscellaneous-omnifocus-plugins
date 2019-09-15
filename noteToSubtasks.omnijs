@@ -15,8 +15,8 @@ var _ = (function() {
     // get current perspective
     var startingPerspective = document.windows[0].perspective;
 
-    // ignore everything up to first '[ ]' or '- ' in TaskPaper
-    var regex = /^.*?(?=(\[\s\]|-\s))/gs;
+    // ignore everything up to first '[ ]' or '- ' or '_'' in TaskPaper
+    var regex = /^.*?(?=_*\[\s\]|_*-\s)/gs;
     var taskpaper = task.note.replace(regex, "");
 
     // get note and replace underscores before "[" with tabs -- needed because Shortcut removes tabs from Drafts template
