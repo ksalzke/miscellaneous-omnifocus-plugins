@@ -14,11 +14,11 @@ var _ = (function() {
     // selection options: tasks, projects, folders, tags
 
     // ***CONFIGURATION:*** set up items here. Tags will be sorted based on order in Omnifocus unless otherwise specified here.
-    firstTags = [];
-    lastTags = [];
 
-    // my own configuration - add all subtags of "Scheduled" to lastTags
-    tagNamed("Scheduled").apply(tag => lastTags.push(tag));
+    config = PlugIn.find("com.KaitlinSalzke.config").library("configLibrary");
+
+    firstTags = config.firstTags || []; // array of tags
+    lastTags = config.lastTags || []; // array of tags
 
     // if called externally (from script) generate selection object
     if (typeof selection == "undefined") {
