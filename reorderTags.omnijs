@@ -14,10 +14,10 @@ var _ = (function() {
     // selection options: tasks, projects, folders, tags
 
     // ***CONFIGURATION:*** set up items here. Tags will be sorted based on order in Omnifocus unless otherwise specified here.
-    config = PlugIn.find("com.KaitlinSalzke.config").library("configLibrary");
-    firstTags = config.firstTags; // array of tags
-    lastTags = config.lastTags; // array of tags
-    ignoredTags = config.ignoredTagsForReorderTags; // array of tags
+    firstTags = [];
+    lastTags = [];
+    tagNamed("Scheduled").apply(tag => lastTags.push(tag));
+    ignoredTags = [tagNamed("·")]; // array of tags
 
     // if called externally (from script) generate selection object
     if (typeof selection == "undefined") {
@@ -37,6 +37,7 @@ var _ = (function() {
           assignedTags.push(tag);
         }
       });
+      console.log(assignedTags);
 
       // sort assigned tags based on tag index
       sortedAssignedTags = assignedTags.sort(function(a, b) {
