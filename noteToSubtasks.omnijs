@@ -44,14 +44,21 @@ var _ = (function() {
       createdById = task.id.primaryKey;
     } else createdById = regexResult[1];
 
-    // add checklist tag, parent tags, and creating note brackets
+    // add parent & checklist tags (where there aren't any exsting tags on line in taskpaper)
+    taskpaper = taskpaper.replace(
+      /(^((?!@tags).)* $)/gm,
+      "@tags(✓," + tagList + ")"
+    );
+    // add parent & checklist tags (where there are existing tags on line in taskpaper)
+    taskpaper = taskpaper.replace(
+      /@tags\((.+)\)/gm,
+      "@tags($1, ✓, " + tagList + ")"
+    );
+
+    // add creating note brackets
     taskpaper = taskpaper.replace(
       /(\-.*)$/gm,
-      "$1 @tags(Checklist," +
-        tagList +
-        ")\n[CREATEDBY: omnifocus:///task/" +
-        createdById +
-        "]"
+      "$1\n[CREATEDBY: omnifocus:///task/" + createdById + "]"
     );
 
     // replace '( )' with '[ ]'
