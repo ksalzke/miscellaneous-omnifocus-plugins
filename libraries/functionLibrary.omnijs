@@ -18,6 +18,22 @@ var _ = (function() {
     return targetTag;
   };
 
+  functionLibrary.getRootTask = function(childTask) {
+    rootTask = null;
+    index = 0;
+    tasksToCheck = childTask.containingProject.task.children;
+    while (rootTask === null && index < tasksToCheck.length) {
+      tasksToCheck[index].apply(function(task) {
+        if (task == childTask) {
+          rootTask = tasksToCheck[index];
+          return ApplyResult.Stop;
+        }
+      });
+      index++;
+    }
+    return rootTask;
+  };
+
   // this doesn't seem to be working - not sure why.
   functionLibrary.replaceTag = function(tasksArray, oldTag, newTag) {
     tasksArray.forEach(function(task) {
