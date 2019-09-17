@@ -98,14 +98,22 @@ var _ = (function() {
     });
 
     sortedItems = [];
+    delineatorFound = false;
     parentSortTag.tasks.forEach(function(item) {
       item.apply(function(task) {
-        task.addTag(backupCopyTag);
-        task.removeTags([sortedTag, parentSortTag]);
+        if (task.name == delineatorTaskName) {
+          deleteObject(task);
+          delineatorFound = true;
+        } else {
+          task.addTag(backupCopyTag);
+          task.removeTags([sortedTag, parentSortTag]);
+        }
       });
       if (
-        item.taskStatus === Task.Status.Available ||
-        item.taskStatus === Task.Status.Blocked
+        delineatorFound == false &&
+        (item.taskStatus === Task.Status.Available ||
+          item.taskStatus === Task.Status.Blocked ||
+          item.taskStatus === Task.Status.Next)
       ) {
         // push project root tasks & top-level SAL tasks
         if (item.project !== null) {
