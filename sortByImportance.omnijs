@@ -166,7 +166,10 @@ var _ = (function() {
           });
         });
 
-        delineatorTask = new Task(delineatorTaskName, delineatorProject.ending);
+        delineatorTask = new Task(
+          delineatorTaskName,
+          delineatorProject.task.ending
+        );
         delineatorTask.addTags([listTag, parentSortTag]);
       }
     );
