@@ -1,0 +1,90 @@
+/*{
+	"type": "action",
+	"targets": ["omnifocus"],
+	"author": "Kaitlin Salzke",
+	"identifier": "com.KaitlinSalzke.getUnsortedItems",
+	"version": "1.0",
+	"description": "",
+	"label": "Get Unsorted Items",
+	"shortLabel": "Get Unsorted Items"
+}*/
+
+var _ = (function() {
+  var action = new PlugIn.Action(function(selection, sender) {
+    // GET CONFIGURATION INFO
+    /* config = PlugIn.find("com.KaitlinSalzke.config").library("configLibrary");
+        ignoredFolders = config.ignoredFoldersForSortByImportance; // NB folders including 'Maybe' will also be ignored
+        ignoredTags = config.ignoredTagsForSortByImportance;
+        sortedTag = config.sortedTag;
+        backupCopyTag = config.backupCopyTag;
+        parentSortTag = config.parentSortTag; */
+    ignoredFolders = [folderNamed("🏢 Bush & Campbell")];
+    ignoredTags = [tagNamed("Activity Type").tagNamed("⏳ Waiting")].concat(
+      tagNamed("Activity Type").tagNamed("⏳ Waiting").children
+    );
+    sortedTag = tagNamed("·");
+    backupCopyTag = tagNamed("ZZ_Sorted") || new Tag("ZZ_Sorted");
+    parentSortTag = tagNamed("I");
+    delineatorProject = folderNamed("⚙️ System")
+      .folderNamed("System maintenance")
+      .projectNamed("[Routine - System]");
+    delineatorTaskName = "----IMPORTANCE SORTED TO HERE-----";
+    listTag = tagNamed("Lists");
+
+    // // GET UNSORTED ITEMS
+
+    // get all remaining projects not in 'maybe' folder
+    projectsList = [];
+    library.apply(function(item) {
+      if (
+        item instanceof Folder &&
+        (/Maybe/.test(item.name) ||
+          (ignoredFolders.length > 0 && ignoredFolders.includes(item)))
+      ) {
+        return ApplyResult.SkipChildren;
+      }
+      if (
+        item instanceof Project &&
+        (item.task.taskStatus === Task.Status.Available ||
+          item.task.taskStatus === Task.Status.Blocked)
+      ) {
+        projectsList.push(item);
+      }
+    });
+
+    // if SAL, get all remaining root tasks; otherwise get project - then check if already ranked and if not add to 'unsorted' array
+    unsortedItems = [];
+    projectsList.forEach(function(project) {
+      if (project.containsSingletonActions) {
+        project.task.children.forEach(function(task) {
+          if (
+            (task.taskStatus === Task.Status.Available ||
+              task.taskStatus === Task.Status.Blocked) &&
+            !task.tags.includes(sortedTag) &&
+            (ignoredTags.length > 0 &&
+              !task.tags.some(function(tag) {
+                return ignoredTags.includes(tag);
+              }))
+          ) {
+            unsortedItems.push(task);
+          }
+        });
+      } else if (!project.task.tags.includes(sortedTag)) {
+        unsortedItems.push(project.task);
+      }
+    });
+
+    unsortedItems.forEach(item => {
+      item.addTag(tagNamed("Unsorted") || new Tag("Unsorted"));
+    });
+  });
+
+  action.validate = function(selection, sender) {
+    // validation code
+    // selection options: tasks, projects, folders, tags
+    return true;
+  };
+
+  return action;
+})();
+_;
