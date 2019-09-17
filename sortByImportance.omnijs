@@ -34,6 +34,7 @@ var _ = (function() {
       .projectNamed("[Routine - System]");
     delineatorTaskName = "----IMPORTANCE SORTED TO HERE-----";
     listTag = tagNamed("Lists");
+    unsortedTag = tagNamed("Unsorted");
 
     // SET UP FOR asyncMergeSort
 
@@ -163,6 +164,7 @@ var _ = (function() {
           item.addTag(parentSortTag);
           item.apply(function(task) {
             task.addTag(sortedTag);
+            task.removeTag(unsortedTag);
           });
         });
 
