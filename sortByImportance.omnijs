@@ -29,6 +29,11 @@ var _ = (function() {
     sortedTag = tagNamed("·");
     backupCopyTag = tagNamed("ZZ_Sorted") || new Tag("ZZ_Sorted");
     parentSortTag = tagNamed("I");
+    delineatorProject = folderNamed("⚙️ System")
+      .folderNamed("System maintenance")
+      .projectNamed("[Routine - System]");
+    delineatorTaskName = "----IMPORTANCE SORTED TO HERE-----";
+    listTag = tagNamed("Lists");
 
     // SET UP FOR asyncMergeSort
 
@@ -152,6 +157,9 @@ var _ = (function() {
             task.addTag(sortedTag);
           });
         });
+
+        delineatorTask = new Task(delineatorTaskName, delineatorProject.ending);
+        delineatorTask.addTags([listTag, parentSortTag]);
       }
     );
   });
