@@ -83,6 +83,18 @@ var _ = (function() {
     }
   };
 
+  functionLibrary.addOneDayToDate = function(date) {
+    timeToAdd = new DateComponents();
+    timeToAdd.day = 1;
+    return Calendar.current.dateByAddingDateComponents(date, timeToAdd);
+  };
+
+  functionLibrary.removeOneDayFromDate = function(date) {
+    timeToAdd = new DateComponents();
+    timeToAdd.day = -1;
+    return Calendar.current.dateByAddingDateComponents(date, timeToAdd);
+  };
+
   // this doesn't seem to be working - not sure why.
   functionLibrary.replaceTag = function(tasksArray, oldTag, newTag) {
     tasksArray.forEach(function(task) {
