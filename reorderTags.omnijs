@@ -10,60 +10,11 @@
 }*/
 var _ = (function() {
   var action = new PlugIn.Action(function(selection, sender) {
-    config = PlugIn.find("com.KaitlinSalzke.config").library("configLibrary");
+    functionLibrary = PlugIn.find("com.KaitlinSalzke.functionLibrary").library(
+      "functionLibrary"
+    );
 
-    // ***CONFIGURATION:*** set up items here. Tags will be sorted based on order in Omnifocus unless otherwise specified here.
-    firstTags = config.firstTags();
-    lastTags = config.lastTags();
-    ignoredTags = config.ignoredTagsForReorderTags();
-
-    // if called externally (from script) generate selection object
-    if (typeof selection == "undefined") {
-      selection = document.windows[0].selection;
-    }
-
-    // create array of all tag names
-    allTags = [];
-    tags.apply(tag => allTags.push(tag));
-
-    // iterate through selected tasks
-    selection.tasks.forEach(function(task) {
-      // get assigned tags, except for excluded tags
-      assignedTags = [];
-      task.tags.forEach(function(tag) {
-        if (!ignoredTags.includes(tag)) {
-          assignedTags.push(tag);
-        }
-      });
-      console.log(assignedTags);
-
-      // sort assigned tags based on tag index
-      sortedAssignedTags = assignedTags.sort(function(a, b) {
-        if (firstTags.includes(a)) {
-          aTagOrder = firstTags.indexOf(a);
-        } else if (lastTags.includes(a)) {
-          aTagOrder = allTags.length + lastTags.indexOf(a) + 1;
-        } else {
-          aTagOrder = firstTags.length + allTags.indexOf(a);
-        }
-
-        if (firstTags.includes(b)) {
-          bTagOrder = firstTags.indexOf(b);
-        } else if (lastTags.includes(b)) {
-          bTagOrder = allTags.length + lastTags.indexOf(b) + 1;
-        } else {
-          bTagOrder = firstTags.length + allTags.indexOf(b);
-        }
-
-        return aTagOrder > bTagOrder;
-      });
-
-      // remove all tags from task
-      task.removeTags(assignedTags);
-
-      // re-apply tags in order
-      task.addTags(sortedAssignedTags);
-    });
+    functionLibrary.reorderTags(selection.tasks);
   });
 
   action.validate = function(selection, sender) {
