@@ -34,6 +34,29 @@ var _ = (function() {
     return rootTask;
   };
 
+
+  functionLibrary.getAllRemainingTasks = function() {
+    allTasks = [];
+    library.apply(function(item) {
+      if (
+        item instanceof Project &&
+        (item.status == Project.Status.Active ||
+          item.status == Project.Status.OnHold) &&
+        item.task.hasChildren
+      ) {
+        item.task.children.forEach(tsk => {
+          if (
+            tsk.taskStatus !== Task.Status.Dropped &&
+            tsk.taskStatus !== Task.Status.Completed
+          ) {
+            allTasks.push(tsk);
+          }
+        });
+      }
+    });
+    return allTasks;
+  };
+
   // this doesn't seem to be working - not sure why.
   functionLibrary.replaceTag = function(tasksArray, oldTag, newTag) {
     tasksArray.forEach(function(task) {
