@@ -162,16 +162,16 @@ var _ = (function() {
           alert("Oh dear, an error occurred.");
         }
         result = sorted;
-        console.log(result);
 
         result.forEach(function(item) {
           item.addTag(parentSortTag);
           item.apply(function(task) {
             task.addTag(sortedTag);
             task.removeTag(unsortedTag);
-            functionLibrary.reorderTags([task]);
           });
         });
+
+        functionLibrary.reorderTags(sortedTag.remainingTasks);
 
         delineatorTask = new Task(
           delineatorTaskName,
