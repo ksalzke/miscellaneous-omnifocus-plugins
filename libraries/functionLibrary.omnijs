@@ -7,6 +7,8 @@
 var _ = (function() {
   var functionLibrary = new PlugIn.Library(new Version("1.0"));
 
+  config = PlugIn.find("com.KaitlinSalzke.config").library("configLibrary");
+
   functionLibrary.findTag = function(nameToFind) {
     var targetTag = null;
     tags.apply(function(tag) {
@@ -34,6 +36,19 @@ var _ = (function() {
     return rootTask;
   };
 
+  functionLibrary.removeProjectTagsFromTasks = function(taskArray) {
+    taskArray.forEach(task => {
+      //check if this is a project; if not remove tags
+      if (
+        task.project == null &&
+        !config
+          .projectsWhereProjectTagsAllowed()
+          .includes(task.containingProject)
+      ) {
+        task.removeTags(config.projectTags());
+      }
+    });
+  };
 
   functionLibrary.getAllRemainingTasks = function() {
     allTasks = [];
