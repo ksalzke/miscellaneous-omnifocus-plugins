@@ -95,6 +95,26 @@ var _ = (function() {
     return Calendar.current.dateByAddingDateComponents(date, timeToAdd);
   };
 
+  functionLibrary.isStalled = function(project) {
+    // return false if SAL
+    if (project.containsSingletonActions) {
+      return false;
+    }
+    // return false if has a next task
+    if (project.nextTask !== null && project.nextTask !== project.task) {
+      return false;
+    }
+    if (!project.task.hasChildren) {
+      return true;
+    }
+    project.task.children.forEach(task => {
+      if (task.taskStatus == Task.Status.Blocked) {
+        return false;
+      }
+    });
+    return true;
+  };
+
   // this doesn't seem to be working - not sure why.
   functionLibrary.replaceTag = function(tasksArray, oldTag, newTag) {
     tasksArray.forEach(function(task) {
