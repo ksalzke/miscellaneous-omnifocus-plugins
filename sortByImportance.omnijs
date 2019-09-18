@@ -75,7 +75,7 @@ var _ = (function() {
           if (
             (task.taskStatus === Task.Status.Available ||
               task.taskStatus === Task.Status.Blocked) &&
-            !task.tags.includes(sortedTag) &&
+            !task.tags.includes(parentSortTag) &&
             (ignoredTags.length > 0 &&
               !task.tags.some(function(tag) {
                 return ignoredTags.includes(tag);
