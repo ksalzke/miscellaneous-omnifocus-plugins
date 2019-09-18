@@ -10,14 +10,12 @@
 }*/
 var _ = (function() {
   var action = new PlugIn.Action(function(selection, sender) {
-    // action code
-    // selection options: tasks, projects, folders, tags
+    config = PlugIn.find("com.KaitlinSalzke.config").library("configLibrary");
 
     // ***CONFIGURATION:*** set up items here. Tags will be sorted based on order in Omnifocus unless otherwise specified here.
-    firstTags = [];
-    lastTags = [];
-    tagNamed("Scheduled").apply(tag => lastTags.push(tag));
-    ignoredTags = [tagNamed("·")]; // array of tags
+    firstTags = config.firstTags();
+    lastTags = config.lastTags();
+    ignoredTags = config.ignoredTagsForReorderTags();
 
     // if called externally (from script) generate selection object
     if (typeof selection == "undefined") {
