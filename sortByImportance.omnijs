@@ -36,6 +36,10 @@ var _ = (function() {
     listTag = tagNamed("Lists");
     unsortedTag = tagNamed("Unsorted");
 
+    functionLibrary = PlugIn.find("com.KaitlinSalzke.functionLibrary").library(
+      "functionLibrary"
+    );
+
     // SET UP FOR asyncMergeSort
 
     if (typeof setImmediate === "undefined") {
@@ -165,6 +169,7 @@ var _ = (function() {
           item.apply(function(task) {
             task.addTag(sortedTag);
             task.removeTag(unsortedTag);
+            functionLibrary.reorderTags([task]);
           });
         });
 
