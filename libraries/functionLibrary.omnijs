@@ -72,6 +72,17 @@ var _ = (function() {
     return allTasks;
   };
 
+  functionLibrary.getTaskWithId = function(taskId, tagToSearch) {
+    foundTask = null;
+    i = 0;
+    while (foundTask == null && i < tagToSearch.tasks.length) {
+      if (tagToSearch.tasks[i].id.primaryKey == taskId) {
+        return tagToSearch.tasks[i];
+      }
+      i++;
+    }
+  };
+
   // this doesn't seem to be working - not sure why.
   functionLibrary.replaceTag = function(tasksArray, oldTag, newTag) {
     tasksArray.forEach(function(task) {
