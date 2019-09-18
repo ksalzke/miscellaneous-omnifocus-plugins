@@ -43,6 +43,10 @@ var _ = (function() {
       task.addTag(tomorrowTag);
       task.removeTag(tomorrowWeekdayTag);
     });
+
+    // remove 'project-only' tags from non-project items
+    allRemainingTasks = functionLibrary.getAllRemainingTasks();
+    functionLibrary.removeProjectTagsFromTasks(allRemainingTasks);
   });
 
   action.validate = function(selection, sender) {
