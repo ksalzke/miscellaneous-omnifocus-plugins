@@ -48,12 +48,14 @@ var _ = (function() {
 
       var task = selection.tasks[0];
 
-      var followUpTaskName = task.name.replace("Waiting for:", "Follow up:");
+      followUpTaskName = `Follow up: ${task.name.replace("Waiting for: ", "")}`;
 
       var followUpTask = new Task(followUpTaskName, task.before);
       followUpTask.removeTag(waitingTag);
       followUpTask.addTag(selectedFollowUpMethod);
       followUpTask.addTags(task.tags);
+      followUpTask.note =
+        "[FOLLOWUPON: omnifocus:///task/" + task.id.primaryKey + "]";
     });
 
     // PROMISE FUNCTION CALLED UPON FORM CANCELLATION
