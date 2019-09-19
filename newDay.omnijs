@@ -16,6 +16,10 @@ var _ = (function() {
       "functionLibrary"
     );
 
+    config = PlugIn.find("com.KaitlinSalzke.config").library("configLibrary");
+
+    deleteObject(config.backupCopyTag());
+
     var todayTag = functionLibrary.findTag("Today");
     var tomorrowTag = functionLibrary.findTag("Tomorrow");
 
