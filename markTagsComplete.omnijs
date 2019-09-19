@@ -14,6 +14,10 @@ var _ = (function() {
     // action code
     // selection options: tasks, projects, folders, tags
 
+    functionLibrary = PlugIn.find("com.KaitlinSalzke.functionLibrary").library(
+      "functionLibrary"
+    );
+
     var tasks = selection.tasks;
 
     var tagToAdd = tagNamed("⠀");
@@ -22,10 +26,7 @@ var _ = (function() {
       task.addTag(tagToAdd);
     });
 
-    // re-order tags
-    PlugIn.find("com.KaitlinSalzke.reorderTags")
-      .action("reorderTags")
-      .perform();
+    functionLibrary.reorderTags(tasks);
   });
 
   action.validate = function(selection, sender) {
