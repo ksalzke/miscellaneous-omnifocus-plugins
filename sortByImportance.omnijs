@@ -88,7 +88,7 @@ var _ = (function() {
             unsortedItems.push(task);
           }
         });
-      } else if (!project.task.tags.includes(sortedTag)) {
+      } else if (!project.task.tags.includes(parentSortTag)) {
         unsortedItems.push(project.task);
       }
     });
