@@ -74,13 +74,31 @@ var _ = (function() {
 
   functionLibrary.getTaskWithId = function(taskId, tagToSearch) {
     foundTask = null;
-    i = 0;
-    while (foundTask == null && i < tagToSearch.tasks.length) {
-      if (tagToSearch.tasks[i].id.primaryKey == taskId) {
-        return tagToSearch.tasks[i];
+    if (tagToSearch) {
+      i = 0;
+      while (foundTask == null && i < tagToSearch.tasks.length) {
+        if (tagToSearch.tasks[i].id.primaryKey == taskId) {
+          return tagToSearch.tasks[i];
+        }
+        i++;
       }
-      i++;
     }
+
+    library.apply(item => {
+      if (item.id.primaryKey == taskId) {
+        foundTask = item;
+        return ApplyResult.Stop;
+      }
+    });
+
+    inbox.apply(item => {
+      if (item.id.primaryKey == taskId) {
+        foundTask = item;
+        return ApplyResult.Stop;
+      }
+    });
+
+    return foundTask;
   };
 
   functionLibrary.addOneDayToDate = function(date) {
