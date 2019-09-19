@@ -1,0 +1,47 @@
+/*{
+	"type": "action",
+	"targets": ["omnifocus"],
+	"author": "Kaitlin Salzke",
+	"identifier": "com.KaitlinSalzke.sendToShortcuts",
+	"version": "1.0",
+	"description": "Send To Shortcuts",
+	"label": "Send To Shortcuts",
+	"shortLabel": "Send To Shortcuts"
+}*/
+var _ = (function() {
+  var action = new PlugIn.Action(function(selection, sender) {
+    // CONFIG
+    shortcutToRun = "Receive Data From OmniFocus";
+
+    task = selection.tasks[0];
+
+    tagNames = [];
+    task.tags.forEach(tag => tagNames.push(tag.name));
+
+    jsonString = `{
+      "name": "${task.name}",
+      "project": "${task.containingProject.name || task.project.name}",
+      "tags": "${tagNames}",
+      "defer date": "${task.effectiveDeferDate}",
+      "due date": "${task.effectiveDueDate}",
+      "flagged": "${task.flagged}",
+    "note": "${task.note}"
+    }`;
+
+    // run shortcut
+    var shortcutsUrlStr =
+      "shortcuts://run-shortcut?name=" +
+      encodeURIComponent(shortcutToRun) +
+      "&input=" +
+      encodeURIComponent(jsonString);
+
+    URL.fromString(shortcutsUrlStr).call(() => {});
+  });
+
+  action.validate = function(selection, sender) {
+    return selection.tasks.length === 1;
+  };
+
+  return action;
+})();
+_;
