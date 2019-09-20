@@ -16,11 +16,12 @@ var _ = (function() {
     // configure tags
     markerTag = tagNamed("Make Prerequisite");
     prerequisiteTag = tagNamed("🔑");
+    projectPrerequisiteTag = tagNamed("🗝");
     dependantTag = tagNamed("Activity Type")
       .tagNamed("⏳ Waiting")
       .tagNamed("🔒 Other task");
 
-    task = selection.tasks[0];
+    task = selection.tasks[0] || selection.projects[0].task;
 
     // GET PREREQUISITE
     // get all tasks tagged with 'prerequisite'
@@ -36,6 +37,11 @@ var _ = (function() {
       prereqTask.name +
       "\n\n" +
       task.note; // prepend prerequisite details to selected note
+
+    if (selection.projects !== null) {
+      selection.projects[0].status = Project.Status.OnHold;
+      prerequisiteTag = projectPrerequisiteTag;
+    }
 
     // DEAL WITH PREREQUISITE TASK
     prereqTask.addTag(prerequisiteTag); // add tag to prerequisite
@@ -55,7 +61,7 @@ var _ = (function() {
 
     // TO DO - check only one task with 'Make Prerequisite' - or adjust script to deal with multiples
 
-    return selection.tasks.length === 1;
+    return selection.tasks.length === 1 || selection.projects.length == 1;
   };
 
   return action;
