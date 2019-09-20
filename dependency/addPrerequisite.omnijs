@@ -38,7 +38,7 @@ var _ = (function() {
       "\n\n" +
       task.note; // prepend prerequisite details to selected note
 
-    if (selection.projects !== null) {
+    if (selection.projects.length > 0) {
       selection.projects[0].status = Project.Status.OnHold;
       prerequisiteTag = projectPrerequisiteTag;
     }
