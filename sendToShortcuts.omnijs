@@ -13,14 +13,20 @@ var _ = (function() {
     // CONFIG
     shortcutToRun = "Receive Data From OmniFocus";
 
-    task = selection.tasks[0];
+    task = selection.tasks[0] || selection.projects[0].task;
 
     tagNames = [];
     task.tags.forEach(tag => tagNames.push(tag.name));
 
+    if (task.containingProject == null) {
+      projectName = "Inbox";
+    } else {
+      projectName = task.containingProject.name;
+    }
+
     jsonString = `{
       "name": "${task.name}",
-      "project": "${task.containingProject.name || task.project.name}",
+      "project": "${projectName}",
       "tags": "${tagNames}",
       "defer date": "${task.effectiveDeferDate}",
       "due date": "${task.effectiveDueDate}",
@@ -39,7 +45,7 @@ var _ = (function() {
   });
 
   action.validate = function(selection, sender) {
-    return selection.tasks.length === 1;
+    return selection.tasks.length === 1 || selection.projects.length === 1;
   };
 
   return action;
