@@ -168,10 +168,9 @@ var _ = (function() {
           item.apply(function(task) {
             task.addTag(sortedTag);
             task.removeTag(unsortedTag);
+            functionLibrary.reorderTags([task]);
           });
         });
-
-        functionLibrary.reorderTags(sortedTag.remainingTasks);
 
         delineatorTask = new Task(
           delineatorTaskName,
