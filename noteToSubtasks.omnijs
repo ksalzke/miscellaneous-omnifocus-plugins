@@ -12,6 +12,10 @@ var _ = (function() {
   var action = new PlugIn.Action(function(selection, sender) {
     task = selection.tasks[0];
 
+    // CONFIG
+    config = PlugIn.find("com.KaitlinSalzke.config").library("configLibrary");
+    uninheritedTags = config.uninheritedTags();
+
     // get current perspective
     var startingPerspective = document.windows[0].perspective;
 
@@ -32,7 +36,9 @@ var _ = (function() {
     //create list of tags from original task
     var tagArray = [];
     task.tags.forEach(function(tag) {
-      tagArray.push(tag.name);
+      if (!uninheritedTags.includes(tag)) {
+        tagArray.push(tag.name);
+      }
     });
     tagList = tagArray.join(", ");
 
@@ -44,15 +50,16 @@ var _ = (function() {
       createdById = task.id.primaryKey;
     } else createdById = regexResult[1];
 
-    // add parent & checklist tags (where there aren't any exsting tags on line in taskpaper)
-    taskpaper = taskpaper.replace(
-      /(^((?!@tags).)* $)/gm,
-      "@tags(✓," + tagList + ")"
-    );
     // add parent & checklist tags (where there are existing tags on line in taskpaper)
     taskpaper = taskpaper.replace(
       /@tags\((.+)\)/gm,
       "@tags($1, ✓, " + tagList + ")"
+    );
+
+    // add parent & checklist tags (where there aren't any exsting tags on line in taskpaper)
+    taskpaper = taskpaper.replace(
+      /(^((?!@tags).)*$)/gm,
+      "$1 @tags(✓," + tagList + ")"
     );
 
     // add creating note brackets
