@@ -127,9 +127,8 @@ function getTasksCompletedOnDate(date) {
 function runReportForDay(date) {
   // generate TaskPaper and send to Day One
   tasksCompletedToday = getTasksCompletedOnDate(date);
-  console.log(tasksCompletedToday);
-  var markdown = "# Tasks Completed on " + date.toDateString();
-  var currentFolder = "No Folder";
+	markdown = "# Tasks Completed on " + date.toDateString();
+	currentFolder = "No Folder";
   tasksCompletedToday.forEach(function(completedTask) {
     containingFolder = functionLibrary.getContainingFolder(completedTask).name;
     if (currentFolder !== containingFolder) {

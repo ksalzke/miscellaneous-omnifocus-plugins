@@ -1,40 +1,24 @@
-/*{
-"type": "action",
-"targets": ["omnifocus"],
-"author": "Kaitlin Salzke",
-"identifier": "com.KaitlinSalzke.markTagsComplete",
-"version": "1.0",
-"description": "",
-"label": "Mark Tags Complete",
-"shortLabel": "Mark Tags Complete"
-}*/
-
 var _ = (function() {
-  var action = new PlugIn.Action(function(selection, sender) {
-    // action code
-    // selection options: tasks, projects, folders, tags
+	var action = new PlugIn.Action(function(selection, sender) {
+		functionLibrary = PlugIn.find("com.KaitlinSalzke.functionLibrary").library(
+			"functionLibrary"
+		);
 
-    functionLibrary = PlugIn.find("com.KaitlinSalzke.functionLibrary").library(
-      "functionLibrary"
-    );
+		tasks = selection.tasks;
 
-    var tasks = selection.tasks;
+		tagToAdd = tagNamed("⠀");
 
-    var tagToAdd = tagNamed("⠀");
+		tasks.forEach(function(task) {
+			task.addTag(tagToAdd);
+		});
 
-    tasks.forEach(function(task) {
-      task.addTag(tagToAdd);
-    });
+		functionLibrary.reorderTags(tasks);
+	});
 
-    functionLibrary.reorderTags(tasks);
-  });
+	action.validate = function(selection, sender) {
+		return selection.tasks.length > 0;
+	};
 
-  action.validate = function(selection, sender) {
-    // validation code
-    // selection options: tasks, projects, folders, tags
-    return selection.tasks.length > 0;
-  };
-
-  return action;
+	return action;
 })();
 _;

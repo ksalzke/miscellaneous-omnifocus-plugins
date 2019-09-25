@@ -9,22 +9,25 @@
 	"shortLabel": "Send To Shortcuts"
 }*/
 var _ = (function() {
-  var action = new PlugIn.Action(function(selection, sender) {
-    // CONFIG
-    shortcutToRun = "Receive Data From OmniFocus";
+	var action = new PlugIn.Action(function(selection, sender) {
+		// CONFIG: Set the below variable to the name of the Shortcut to be run.
+		shortcutToRun = "Receive Data From OmniFocus";
 
-    task = selection.tasks[0] || selection.projects[0].task;
+		task = selection.tasks[0] || selection.projects[0].task;
 
-    tagNames = [];
-    task.tags.forEach(tag => tagNames.push(tag.name));
+		// get list of tag names
+		tagNames = [];
+		task.tags.forEach(tag => tagNames.push(tag.name));
 
-    if (task.containingProject == null) {
-      projectName = "Inbox";
-    } else {
-      projectName = task.containingProject.name;
-    }
+		// get name of project or "Inbox"
+		if (task.containingProject == null) {
+			projectName = "Inbox";
+		} else {
+			projectName = task.containingProject.name;
+		}
 
-    jsonString = `{
+		// build data to send to Shortcuts
+		jsonString = `{
       "name": "${task.name}",
       "project": "${projectName}",
       "tags": "${tagNames}",
@@ -34,20 +37,20 @@ var _ = (function() {
     "note": "${task.note}"
     }`;
 
-    // run shortcut
-    var shortcutsUrlStr =
-      "shortcuts://run-shortcut?name=" +
-      encodeURIComponent(shortcutToRun) +
-      "&input=" +
-      encodeURIComponent(jsonString);
+		// run shortcut
+		var shortcutsUrlStr =
+			"shortcuts://run-shortcut?name=" +
+			encodeURIComponent(shortcutToRun) +
+			"&input=" +
+			encodeURIComponent(jsonString);
 
-    URL.fromString(shortcutsUrlStr).call(() => {});
-  });
+		URL.fromString(shortcutsUrlStr).call(() => {});
+	});
 
-  action.validate = function(selection, sender) {
-    return selection.tasks.length === 1 || selection.projects.length === 1;
-  };
+	action.validate = function(selection, sender) {
+		return selection.tasks.length === 1 || selection.projects.length === 1;
+	};
 
-  return action;
+	return action;
 })();
 _;
