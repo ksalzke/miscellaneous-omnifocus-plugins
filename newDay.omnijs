@@ -51,6 +51,14 @@ var _ = (function() {
     // remove 'project-only' tags from non-project items
     allRemainingTasks = functionLibrary.getAllRemainingTasks();
     functionLibrary.removeProjectTagsFromTasks(allRemainingTasks);
+
+    // if 'Dependency' plugin is installed, check if dependant tasks have had all prerequisites completed
+    dependencyPlugin = PlugIn.find("com.KaitlinSalzke.DependencyForOmniFocus");
+    if (dependencyPlugin == null) {
+      console.warn("DependencyForOmniFocus plugin is not installed.");
+    } else {
+      dependencyPlugin.action("checkPrerequisites").perform();
+    }
   });
 
   action.validate = function(selection, sender) {
