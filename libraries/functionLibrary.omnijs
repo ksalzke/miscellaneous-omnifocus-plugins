@@ -186,6 +186,35 @@ var _ = (function() {
     });
   };
 
+  functionLibrary.getContainingFolder = function(task) {
+    project = task.project || task.containingProject || "";
+    let emptyResult = {
+      name: "No Folder"
+    };
+    if (project === "") {
+      return emptyResult;
+    }
+    foundFolder = null;
+    i = 0;
+    while (foundFolder === null && i < folders.length) {
+      topFolderToCheck = folders[i];
+      topFolderToCheck.apply(item => {
+        if (item === project) {
+          foundFolder = topFolderToCheck;
+          return ApplyResult.Stop;
+        }
+      });
+      i++;
+    }
+    if (foundFolder === null) {
+      let result = {
+        name: "No Folder"
+      };
+      return result;
+    }
+    return foundFolder || emptyResult;
+  };
+
   // this doesn't seem to be working - not sure why.
   functionLibrary.replaceTag = function(tasksArray, oldTag, newTag) {
     tasksArray.forEach(function(task) {
