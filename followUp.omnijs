@@ -51,9 +51,9 @@ var _ = (function() {
       followUpTaskName = `Follow up: ${task.name.replace("Waiting for: ", "")}`;
 
       var followUpTask = new Task(followUpTaskName, task.before);
+      followUpTask.addTags(task.tags);
       followUpTask.removeTag(waitingTag);
       followUpTask.addTag(selectedFollowUpMethod);
-      followUpTask.addTags(task.tags);
       followUpTask.note =
         "[FOLLOWUPON: omnifocus:///task/" + task.id.primaryKey + "]";
     });
