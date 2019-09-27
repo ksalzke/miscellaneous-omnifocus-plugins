@@ -1,0 +1,71 @@
+/*{
+	"type": "action",
+	"targets": ["omnifocus"],
+	"author": "Kaitlin Salzke",
+	"identifier": "com.KaitlinSalzke.customComplete",
+	"version": "1.0",
+	"description": "To be used instead of regular 'complete'. Ideally will triggered by hook in the future.",
+	"label": "Custom Complete",
+	"shortLabel": "Custom Complete"
+}*/
+var _ = (function() {
+	var action = new PlugIn.Action(function(selection, sender) {
+		task = selection.tasks[0] || selection.projects[0].task;
+
+		functionLibrary = PlugIn.find("com.KaitlinSalzke.functionLibrary").library(
+			"functionLibrary"
+		);
+
+		task.markComplete();
+
+		// run 'complete prerequisite' action to check task and ancestors
+		PlugIn.find("com.KaitlinSalzke.DependencyForOmniFocus")
+			.library("dependencyLibrary")
+			.checkDependantsForTaskAndAncestors(task);
+
+		// if 'Follow up' task, make a note on original task when followed up on
+		if (/[fF]ollow up/.test(task.name)) {
+			originalTaskRegex = /\[FOLLOWUPON: omnifocus:\/\/\/task\/(.+)\]/g;
+			originalTaskRegexResult = originalTaskRegex.exec(task.note);
+
+			if (originalTaskRegexResult !== null) {
+				originalTaskId = originalTaskRegexResult[1];
+				originalTask = functionLibrary.getTaskWithId(originalTaskId);
+
+				now = new Date();
+
+				originalTask.note = `${
+					originalTask.note
+				}\n\nFollowed up ${now.toString()}`;
+			}
+		}
+
+		// if no remaining tasks in project
+		if (
+			document.windows[0].perspective !== Perspective.BuiltIn.Projects &&
+			task.containingProject !== null &&
+			task.containingProject.status !== Project.Status.Done &&
+			functionLibrary.isStalled(task.containingProject)
+		) {
+			alert = new Alert(
+				"Project Stalled",
+				"There are no further actions in this project. Do you want to review it now?"
+			);
+			alert.addOption("Yes");
+			alert.addOption("No");
+			alert.show(result => {
+				if (result == 0) {
+					urlStr = "omnifocus:///task/" + task.containingProject.id.primaryKey;
+					URL.fromString(urlStr).call(() => {});
+				}
+			});
+		}
+	});
+
+	action.validate = function(selection, sender) {
+		return selection.tasks.length === 1 || selection.projects.length === 1;
+	};
+
+	return action;
+})();
+_;
