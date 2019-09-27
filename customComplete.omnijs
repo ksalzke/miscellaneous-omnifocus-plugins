@@ -10,6 +10,11 @@
 }*/
 var _ = (function() {
 	var action = new PlugIn.Action(function(selection, sender) {
+		// CONFIG - array of additional functions to be run at end goes here
+		additionalFunctions = PlugIn.find("com.KaitlinSalzke.config")
+			.library("configLibrary")
+			.customCompleteAdditionalFunctions();
+
 		task = selection.tasks[0] || selection.projects[0].task;
 
 		functionLibrary = PlugIn.find("com.KaitlinSalzke.functionLibrary").library(
@@ -60,6 +65,11 @@ var _ = (function() {
 				}
 			});
 		}
+
+		// run any other actions desired
+		additionalFunctions.forEach(function(func) {
+			func(task);
+		});
 	});
 
 	action.validate = function(selection, sender) {
