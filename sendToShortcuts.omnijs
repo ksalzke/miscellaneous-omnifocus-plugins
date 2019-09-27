@@ -34,7 +34,7 @@ var _ = (function() {
       "defer date": "${task.effectiveDeferDate}",
       "due date": "${task.effectiveDueDate}",
       "flagged": "${task.flagged}",
-    "note": "${task.note}"
+    "note": "${task.note.replace("\n", "\\n")}"
     }`;
 
 		// run shortcut
