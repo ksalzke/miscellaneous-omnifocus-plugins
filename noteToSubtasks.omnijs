@@ -42,14 +42,6 @@ var _ = (function() {
 		});
 		tagList = tagArray.join(", ");
 
-		// get ID of (topmost) creating note
-		var createdById;
-		var regex = /\[CREATEDBY: omnifocus:\/\/\/task\/(.+)\]/;
-		var regexResult = regex.exec(task.note);
-		if (regexResult == null) {
-			createdById = task.id.primaryKey;
-		} else createdById = regexResult[1];
-
 		// add parent & checklist tags (where there are existing tags on line in taskpaper)
 		taskpaper = taskpaper.replace(
 			/@tags\((.+)\)/gm,
@@ -60,12 +52,6 @@ var _ = (function() {
 		taskpaper = taskpaper.replace(
 			/(^((?!@tags).)*$)/gm,
 			"$1 @tags(✓," + tagList + ")"
-		);
-
-		// add creating note brackets
-		taskpaper = taskpaper.replace(
-			/(\-.*)$/gm,
-			"$1\n[CREATEDBY: omnifocus:///task/" + createdById + "]"
 		);
 
 		// replace '( )' with '[ ]'
