@@ -28,21 +28,10 @@ var _ = (function() {
 			.library("dependencyLibrary")
 			.checkDependantsForTaskAndAncestors(task);
 
-		// if 'Follow up' task, make a note on original task when followed up on
-		if (/[fF]ollow up/.test(task.name)) {
-			originalTaskRegex = /\[FOLLOWUPON: omnifocus:\/\/\/task\/(.+)\]/g;
-			originalTaskRegexResult = originalTaskRegex.exec(task.note);
-
-			if (originalTaskRegexResult !== null) {
-				originalTaskId = originalTaskRegexResult[1];
-				originalTask = functionLibrary.getTaskWithId(originalTaskId);
-
-				now = new Date();
-
-				originalTask.note = `${
-					originalTask.note
-				}\n\nFollowed up ${now.toString()}`;
-			}
+		// note details of follow-up if this is a follow up task (if 'delegation' plugin installed)
+		delegationPlugin = PlugIn.find("com.KaitlinSalzke.Delegation");
+		if (delegationPlugin !== null) {
+			delegationPlugin.library("delegationLib").noteFollowUp(task);
 		}
 
 		// if no remaining tasks in project
