@@ -1,17 +1,16 @@
 {
-	"defaultLocale": "en",
-	"identifier": "com.KaitlinSalzke.editTasks",
-	"author": "Kaitlin Salzke",
-	"description": "A series of actions to edit OmniFocus tasks",
-	"version": "1.0.0",
-	"actions": [
-		{
-			"identifier": "addOneDayToDueDate"
-		},
-		{ "identifier": "duplicateTasks" },
-		{ "identifier": "markCompletedYesterday" },
-		{ "identifier": "markTagsComplete" },
-		{ "identifier": "reorderTags" }
-	],
-	"libraries": []
+  "defaultLocale": "en",
+  "identifier": "com.KaitlinSalzke.editTasks",
+  "author": "Kaitlin Salzke",
+  "description": "A series of actions to edit OmniFocus tasks",
+  "version": "1.0.0",
+  "actions": [
+    {
+      "identifier": "addOneDayToDueDate"
+    },
+    { "identifier": "duplicateTasks" },
+    { "identifier": "markCompletedYesterday" },
+    { "identifier": "markTagsComplete" }
+  ],
+  "libraries": []
 }
