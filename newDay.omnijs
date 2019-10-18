@@ -63,6 +63,21 @@ var _ = (function() {
     } else {
       dependencyPlugin.action("checkPrerequisites").perform();
     }
+
+    // if 'com.KaitlinSalzke.config' installed, set projects inside 'maybe' folders to on-hold
+    configPlugin = PlugIn.find("com.KaitlinSalzke.config");
+    if (configPlugin !== null) {
+      config = configPlugin.library("configLibrary");
+      maybeFolders = config.maybeFolders();
+      maybeFolders.forEach(folder => {
+        folder.apply(item => {
+          if (item instanceof Project) {
+            item.status = Project.Status.OnHold;
+            return ApplyResult.SkipChildren;
+          }
+        });
+      });
+    }
   });
 
   action.validate = function(selection, sender) {
