@@ -64,16 +64,27 @@ var _ = (function() {
       dependencyPlugin.action("checkPrerequisites").perform();
     }
 
-    // if 'com.KaitlinSalzke.config' installed, set projects inside 'maybe' folders to on-hold
+    // if 'com.KaitlinSalzke.config' installed, deal with 'maybe' folders
     configPlugin = PlugIn.find("com.KaitlinSalzke.config");
     if (configPlugin !== null) {
       config = configPlugin.library("configLibrary");
       maybeFolders = config.maybeFolders();
       maybeFolders.forEach(folder => {
+        // set all projects to on-hold
         folder.apply(item => {
           if (item instanceof Project) {
             item.status = Project.Status.OnHold;
             return ApplyResult.SkipChildren;
+          }
+        });
+        // move 'maybe' folder to end of parent folder
+        library.apply(item => {
+          if (!item instanceof Folder) {
+            return ApplyResult.SkipChildren;
+          } else {
+            if (item.folders !== undefined && item.folders.includes(folder)) {
+              moveSections([folder], item.ending);
+            }
           }
         });
       });
