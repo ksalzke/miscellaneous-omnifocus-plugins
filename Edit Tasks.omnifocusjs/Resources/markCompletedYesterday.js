@@ -8,7 +8,7 @@ var _ = (function() {
 		now.setHours(23);
 		now.setMinutes(59);
 
-		yesterday = functionLibrary.removeOneDayFromDate(now);
+		yesterday = functionLibrary.adjustDateByDays(now, -1);
 
 		selection.tasks.forEach(function(task) {
 			task.markComplete(yesterday);
