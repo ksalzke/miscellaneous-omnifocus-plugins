@@ -10,7 +10,8 @@
     },
     { "identifier": "duplicateTasks" },
     { "identifier": "markCompletedYesterday" },
-    { "identifier": "markTagsComplete" }
+    { "identifier": "markTagsComplete" },
+    { "identifier": "trimName" }
   ],
   "libraries": []
 }
