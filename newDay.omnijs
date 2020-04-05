@@ -9,8 +9,8 @@
 "shortLabel": "New Day"
 }*/
 
-var _ = (function() {
-  var action = new PlugIn.Action(function(selection, sender) {
+(() => {
+  var action = new PlugIn.Action(function (selection, sender) {
     functionLibrary = PlugIn.find("com.KaitlinSalzke.functionLibrary").library(
       "functionLibrary"
     );
@@ -28,7 +28,7 @@ var _ = (function() {
     tomorrowTag = functionLibrary.findTag("Tomorrow");
 
     // Move tasks from 'Tomorrow' to 'Today'
-    tomorrowTag.tasks.forEach(function(task) {
+    tomorrowTag.tasks.forEach(function (task) {
       task.addTag(todayTag);
       task.removeTag(tomorrowTag);
     });
@@ -47,7 +47,7 @@ var _ = (function() {
     tomorrowWeekdayTag = functionLibrary.findTag(tomorrowDay);
 
     // Replace tag
-    tomorrowWeekdayTag.tasks.forEach(function(task) {
+    tomorrowWeekdayTag.tasks.forEach(function (task) {
       task.addTag(tomorrowTag);
       task.removeTag(tomorrowWeekdayTag);
     });
@@ -65,16 +65,16 @@ var _ = (function() {
     if (configPlugin !== null) {
       config = configPlugin.library("configLibrary");
       maybeFolders = config.maybeFolders();
-      maybeFolders.forEach(folder => {
+      maybeFolders.forEach((folder) => {
         // set all projects to on-hold
-        folder.apply(item => {
+        folder.apply((item) => {
           if (item instanceof Project) {
             item.status = Project.Status.OnHold;
             return ApplyResult.SkipChildren;
           }
         });
         // move 'maybe' folder to end of parent folder
-        library.apply(item => {
+        library.apply((item) => {
           if (!item instanceof Folder) {
             return ApplyResult.SkipChildren;
           } else {
@@ -94,10 +94,9 @@ var _ = (function() {
     }
   });
 
-  action.validate = function(selection, sender) {
+  action.validate = function (selection, sender) {
     return true;
   };
 
   return action;
 })();
-_;

@@ -8,92 +8,91 @@
 	"label": "TaskPaper Note to Subtasks",
 	"shortLabel": "Note to Subtasks"
 }*/
-var _ = (function() {
-	var action = new PlugIn.Action(function(selection, sender) {
-		task = selection.tasks[0];
+(() => {
+  var action = new PlugIn.Action(function (selection, sender) {
+    task = selection.tasks[0];
 
-		// CONFIG
-		config = PlugIn.find("com.KaitlinSalzke.config").library("configLibrary");
-		uninheritedTags = config.uninheritedTags();
+    // CONFIG
+    config = PlugIn.find("com.KaitlinSalzke.config").library("configLibrary");
+    uninheritedTags = config.uninheritedTags();
 
-		// get current perspective
-		var startingPerspective = document.windows[0].perspective;
+    // get current perspective
+    var startingPerspective = document.windows[0].perspective;
 
-		// ignore everything up to first '[ ]' or '- ' or '_'' in TaskPaper
-		var regex = /^.*?(?=_*\[\s\]|_*-\s)/gs;
-		var taskpaper = task.note.replace(regex, "");
+    // ignore everything up to first '[ ]' or '- ' or '_'' in TaskPaper
+    var regex = /^.*?(?=_*\[\s\]|_*-\s)/gs;
+    var taskpaper = task.note.replace(regex, "");
 
-		// get note and replace underscores before "[" with tabs -- needed because Shortcut removes tabs from Drafts template
-		taskpaper = taskpaper.replace(/(_)+(?=\[)/g, function(match) {
-			let underscoreLength = match.length;
-			let replacement = "\t".repeat(underscoreLength);
-			return replacement;
-		});
+    // get note and replace underscores before "[" with tabs -- needed because Shortcut removes tabs from Drafts template
+    taskpaper = taskpaper.replace(/(_)+(?=\[)/g, function (match) {
+      let underscoreLength = match.length;
+      let replacement = "\t".repeat(underscoreLength);
+      return replacement;
+    });
 
-		// replace '[ ]' with '-'
-		taskpaper = taskpaper.replace(/\[\s\]/g, " - ");
+    // replace '[ ]' with '-'
+    taskpaper = taskpaper.replace(/\[\s\]/g, " - ");
 
-		//create list of tags from original task
-		var tagArray = [];
-		task.tags.forEach(function(tag) {
-			if (!uninheritedTags.includes(tag)) {
-				tagArray.push(tag.name);
-			}
-		});
-		tagList = tagArray.join(", ");
+    //create list of tags from original task
+    var tagArray = [];
+    task.tags.forEach(function (tag) {
+      if (!uninheritedTags.includes(tag)) {
+        tagArray.push(tag.name);
+      }
+    });
+    tagList = tagArray.join(", ");
 
-		// add parent & checklist tags (where there are existing tags on line in taskpaper)
-		taskpaper = taskpaper.replace(
-			/@tags\((.+)\)/gm,
-			"@tags($1, ✓, " + tagList + ")"
-		);
+    // add parent & checklist tags (where there are existing tags on line in taskpaper)
+    taskpaper = taskpaper.replace(
+      /@tags\((.+)\)/gm,
+      "@tags($1, ✓, " + tagList + ")"
+    );
 
-		// add parent & checklist tags (where there aren't any exsting tags on line in taskpaper)
-		taskpaper = taskpaper.replace(
-			/(^((?!@tags).)*$)/gm,
-			"$1 @tags(✓," + tagList + ")"
-		);
+    // add parent & checklist tags (where there aren't any exsting tags on line in taskpaper)
+    taskpaper = taskpaper.replace(
+      /(^((?!@tags).)*$)/gm,
+      "$1 @tags(✓," + tagList + ")"
+    );
 
-		// replace '( )' with '[ ]'
-		taskpaper = taskpaper.replace(/\(\s\)/g, "[ ]");
+    // replace '( )' with '[ ]'
+    taskpaper = taskpaper.replace(/\(\s\)/g, "[ ]");
 
-		// replace '< >' with '( )'
-		taskpaper = taskpaper.replace(/\<\s\>/g, "( )");
+    // replace '< >' with '( )'
+    taskpaper = taskpaper.replace(/\<\s\>/g, "( )");
 
-		// build URL to paste tasks
-		var pasteUrlStr =
-			"omnifocus:///paste?target=/task/" +
-			encodeURIComponent(task.id.primaryKey) +
-			"&content=" +
-			encodeURIComponent(taskpaper);
+    // build URL to paste tasks
+    var pasteUrlStr =
+      "omnifocus:///paste?target=/task/" +
+      encodeURIComponent(task.id.primaryKey) +
+      "&content=" +
+      encodeURIComponent(taskpaper);
 
-		//open URL (generating subtasks)
-		URL.fromString(pasteUrlStr).call(() => {
-			// return to starting perspective
-			console.log(startingPerspective);
-			if (startingPerspective === Perspective.BuiltIn.Projects) {
-				taskId = task.id.primaryKey;
-				taskUrlStr = "omnifocus:///task/" + taskId;
-				URL.fromString(taskUrlStr).call(() => {});
-			} else if (startingPerspective instanceof Perspective.BuiltIn) {
-				document.windows[0].perspective = startingPerspective;
-			} else {
-				var perspectiveUrlStr =
-					"omnifocus:///perspective/" +
-					encodeURIComponent(startingPerspective.name);
-				URL.fromString(perspectiveUrlStr).call(() => {});
-			}
-		});
-	});
+    //open URL (generating subtasks)
+    URL.fromString(pasteUrlStr).call(() => {
+      // return to starting perspective
+      console.log(startingPerspective);
+      if (startingPerspective === Perspective.BuiltIn.Projects) {
+        taskId = task.id.primaryKey;
+        taskUrlStr = "omnifocus:///task/" + taskId;
+        URL.fromString(taskUrlStr).call(() => {});
+      } else if (startingPerspective instanceof Perspective.BuiltIn) {
+        document.windows[0].perspective = startingPerspective;
+      } else {
+        var perspectiveUrlStr =
+          "omnifocus:///perspective/" +
+          encodeURIComponent(startingPerspective.name);
+        URL.fromString(perspectiveUrlStr).call(() => {});
+      }
+    });
+  });
 
-	action.validate = function(selection, sender) {
-		if (selection.tasks.length === 1) {
-			return true;
-		} else {
-			return false;
-		}
-	};
+  action.validate = function (selection, sender) {
+    if (selection.tasks.length === 1) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
-	return action;
+  return action;
 })();
-_;

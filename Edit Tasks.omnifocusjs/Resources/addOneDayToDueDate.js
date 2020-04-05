@@ -1,5 +1,5 @@
-var _ = (function() {
-  var action = new PlugIn.Action(function(selection, sender) {
+(() => {
+  var action = new PlugIn.Action(function (selection, sender) {
     tasksToChange = selection.tasks;
 
     // get default due time to use if task has no due date
@@ -9,11 +9,11 @@ var _ = (function() {
     defaultDueMinutes = defaultDueTimeSplit[1];
 
     // get 'task' for each selected project
-    selection.projects.forEach(function(project) {
+    selection.projects.forEach(function (project) {
       tasksToChange.push(project.task);
     });
 
-    tasksToChange.forEach(function(task) {
+    tasksToChange.forEach(function (task) {
       // get existing due date
       existingDueDate = task.effectiveDueDate;
 
@@ -39,10 +39,9 @@ var _ = (function() {
     });
   });
 
-  action.validate = function(selection, sender) {
+  action.validate = function (selection, sender) {
     return selection.tasks.length > 0 || selection.projects.length > 0;
   };
 
   return action;
 })();
-_;

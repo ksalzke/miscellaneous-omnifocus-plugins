@@ -8,8 +8,8 @@
 	"label": "Send To Shortcuts",
 	"shortLabel": "Send To Shortcuts"
 }*/
-var _ = (function() {
-  var action = new PlugIn.Action(function(selection, sender) {
+(() => {
+  var action = new PlugIn.Action(function (selection, sender) {
     // CONFIG: Set the below variable to the name of the Shortcut to be run.
     shortcutToRun = "Receive Data From OmniFocus";
 
@@ -17,7 +17,7 @@ var _ = (function() {
 
     // get list of tag names
     tagNames = [];
-    task.tags.forEach(tag => tagNames.push(tag.name));
+    task.tags.forEach((tag) => tagNames.push(tag.name));
 
     // get name of project or "Inbox"
     if (task.containingProject == null) {
@@ -48,10 +48,9 @@ var _ = (function() {
     URL.fromString(shortcutsUrlStr).call(() => {});
   });
 
-  action.validate = function(selection, sender) {
+  action.validate = function (selection, sender) {
     return selection.tasks.length === 1 || selection.projects.length === 1;
   };
 
   return action;
 })();
-_;

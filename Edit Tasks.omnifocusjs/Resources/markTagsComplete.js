@@ -1,5 +1,5 @@
-var _ = (function() {
-  var action = new PlugIn.Action(function(selection, sender) {
+(() => {
+  var action = new PlugIn.Action(function (selection, sender) {
     functionLibrary = PlugIn.find("com.KaitlinSalzke.functionLibrary").library(
       "functionLibrary"
     );
@@ -8,7 +8,7 @@ var _ = (function() {
 
     tagToAdd = tagNamed("⠀");
 
-    tasks.forEach(function(task) {
+    tasks.forEach(function (task) {
       task.addTag(tagToAdd);
     });
 
@@ -19,10 +19,9 @@ var _ = (function() {
     }
   });
 
-  action.validate = function(selection, sender) {
+  action.validate = function (selection, sender) {
     return selection.tasks.length > 0;
   };
 
   return action;
 })();
-_;
