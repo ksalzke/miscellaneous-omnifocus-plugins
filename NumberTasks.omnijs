@@ -13,7 +13,7 @@
     var count = 1;
 
     selection.tasks.forEach(function (task) {
-      task.name = count++ + ". " + task.name;
+      task.name = task.name.replace(/^(\d*\. |^)/, count++ + ". ");
     });
   });
 
