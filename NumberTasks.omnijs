@@ -1,0 +1,25 @@
+/*{
+	"type": "action",
+	"targets": ["omnifocus"],
+	"author": "Kaitlin Salzke",
+	"identifier": "com.KaitlinSalzke.NumberTasks",
+	"version": "1.0",
+	"description": "Prepend tasks with numbers",
+	"label": "Number Tasks",
+	"shortLabel": "Number Tasks"
+}*/
+(() => {
+  var action = new PlugIn.Action(function (selection, sender) {
+    var count = 1;
+
+    selection.tasks.forEach(function (task) {
+      task.name = count++ + ". " + task.name;
+    });
+  });
+
+  action.validate = function (selection, sender) {
+    return selection.tasks.length > 0;
+  };
+
+  return action;
+})();
