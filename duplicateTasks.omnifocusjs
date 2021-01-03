@@ -1,3 +1,13 @@
+/*{
+	"type": "action",
+	"targets": ["omnifocus"],
+	"author": "Kaitlin Salzke",
+	"identifier": "com.KaitlinSalzke.duplicateTasks",
+	"version": "1.0.0",
+	"description": "Duplicate Tasks",
+	"label": "Duplicate Tasks",
+	"shortLabel": "Duplicate Tasks"
+}*/
 (() => {
   var action = new PlugIn.Action(function (selection, sender) {
     selection.tasks.forEach(function (task) {

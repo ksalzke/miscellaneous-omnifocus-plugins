@@ -1,3 +1,13 @@
+/*{
+	"type": "action",
+	"targets": ["omnifocus"],
+	"author": "Kaitlin Salzke",
+  "identifier": "com.KaitlinSalzke.markCompletedYesterday",
+	"version": "1.0.0",
+	"description": "Mark Completed Yesterday",
+	"label": "Mark Completed Yesterday",
+	"shortLabel": "Mark Completed Yesterday"
+}*/
 (() => {
   var action = new PlugIn.Action(function (selection, sender) {
     functionLibrary = PlugIn.find("com.KaitlinSalzke.functionLibrary").library(

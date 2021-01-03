@@ -1,3 +1,13 @@
+/*{
+	"type": "action",
+	"targets": ["omnifocus"],
+	"author": "Kaitlin Salzke",
+	"identifier": "com.KaitlinSalzke.addOneDayToDueDate",
+	"version": "1.0.0",
+	"description": "Add One Day To Due Date",
+	"label": "Add One Day To Due Date",
+	"shortLabel": "Add One Day To Due Date"
+}*/
 (() => {
   var action = new PlugIn.Action(function (selection, sender) {
     tasksToChange = selection.tasks;

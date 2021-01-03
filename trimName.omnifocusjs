@@ -1,3 +1,13 @@
+/*{
+	"type": "action",
+	"targets": ["omnifocus"],
+	"author": "Kaitlin Salzke",
+	"identifier": "com.KaitlinSalzke.trimName",
+	"version": "1.0.0",
+	"description": "Trim Name",
+	"label": "Trim Name",
+	"shortLabel": "Trim Name"
+}*/
 (() => {
   var action = new PlugIn.Action(function (selection, sender) {
     functionLibrary = PlugIn.find("com.KaitlinSalzke.functionLibrary").library(
@@ -6,17 +16,9 @@
 
     tasks = selection.tasks;
 
-    tagToAdd = tagNamed("⠀");
-
     tasks.forEach(function (task) {
-      task.addTag(tagToAdd);
+      task.name = task.name.trim();
     });
-
-    // if reorderTags plugin installed, reorder tags
-    reorderTagsPlugin = PlugIn.find("com.KaitlinSalzke.reorderTags");
-    if (reorderTagsPlugin !== null) {
-      reorderTagsPlugin.library("reorderTagsLibrary").reorderTags(tasks);
-    }
   });
 
   action.validate = function (selection, sender) {
