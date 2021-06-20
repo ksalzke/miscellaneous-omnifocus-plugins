@@ -1,23 +1,25 @@
+/* global PlugIn duplicateTasks */
+/* eslint spaced-comment: ["error", "always", { "exceptions": ["{"] }] */
 /*{
-	"type": "action",
-	"targets": ["omnifocus"],
-	"author": "Kaitlin Salzke",
-	"identifier": "com.KaitlinSalzke.duplicateTasks",
-	"version": "1.0.0",
-	"description": "Duplicate Tasks",
-	"label": "Duplicate Tasks",
-	"shortLabel": "Duplicate Tasks"
+"type": "action",
+"targets": ["omnifocus"],
+"author": "Kaitlin Salzke",
+"identifier": "com.KaitlinSalzke.duplicateTasks",
+"version": "1.0.0",
+"description": "Duplicate Tasks",
+"label": "Duplicate Tasks",
+"shortLabel": "Duplicate Tasks"
 }*/
 (() => {
-  var action = new PlugIn.Action(function (selection, sender) {
+  const action = new PlugIn.Action(function (selection, sender) {
     selection.tasks.forEach(function (task) {
-      duplicateTasks([task], task.after);
-    });
-  });
+      duplicateTasks([task], task.after)
+    })
+  })
 
   action.validate = function (selection, sender) {
-    return selection.tasks.length > 0;
-  };
+    return selection.tasks.length > 0
+  }
 
-  return action;
-})();
+  return action
+})()

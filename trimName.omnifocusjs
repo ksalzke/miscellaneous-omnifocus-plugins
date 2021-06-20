@@ -1,29 +1,27 @@
+/* global PlugIn */
+/* eslint spaced-comment: ["error", "always", { "exceptions": ["{"] }] */
 /*{
-	"type": "action",
-	"targets": ["omnifocus"],
-	"author": "Kaitlin Salzke",
-	"identifier": "com.KaitlinSalzke.trimName",
-	"version": "1.0.0",
-	"description": "Trim Name",
-	"label": "Trim Name",
-	"shortLabel": "Trim Name"
+"type": "action",
+"targets": ["omnifocus"],
+"author": "Kaitlin Salzke",
+"identifier": "com.KaitlinSalzke.trimName",
+"version": "1.0.0",
+"description": "Trim Name",
+"label": "Trim Name",
+"shortLabel": "Trim Name"
 }*/
 (() => {
-  var action = new PlugIn.Action(function (selection, sender) {
-    functionLibrary = PlugIn.find("com.KaitlinSalzke.functionLibrary").library(
-      "functionLibrary"
-    );
-
-    tasks = selection.tasks;
+  const action = new PlugIn.Action(function (selection, sender) {
+    const tasks = selection.tasks
 
     tasks.forEach(function (task) {
-      task.name = task.name.trim();
-    });
-  });
+      task.name = task.name.trim()
+    })
+  })
 
   action.validate = function (selection, sender) {
-    return selection.tasks.length > 0;
-  };
+    return selection.tasks.length > 0
+  }
 
-  return action;
-})();
+  return action
+})()
