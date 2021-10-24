@@ -5,10 +5,11 @@
 "targets": ["omnifocus"],
 "author": "Kaitlin Salzke",
 "identifier": "com.KaitlinSalzke.markCompletedYesterday",
-"version": "1.0.0",
+"version": "1.1.0",
 "description": "Mark Completed Yesterday",
 "label": "Mark Completed Yesterday",
-"shortLabel": "Mark Completed Yesterday"
+"shortLabel": "Mark Completed Yesterday",
+"image": "checkmark.circle.fill"
 }*/
 
 (() => {
