@@ -6,7 +6,7 @@ _Please note that all scripts on my GitHub account (or shared elsewhere) are wor
 
 ## Known issues 
 
-None yet! 🤞
+Refer to the 'issues' in this repo for any known issues and planned changes/enhancements.
 
 # Installation & Set-Up
 
